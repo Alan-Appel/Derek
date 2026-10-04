@@ -4,6 +4,9 @@
 // Options (anywhere in argv):
 //   --page <path>   page to render (default film/index.html)
 //   --sub <n>       motion blur: n sub-frames per frame across a 180° shutter, averaged by ffmpeg
+//   --size WxH      viewport (default 1920x1080; the Derek presentation is 1080x1920)
+//   --query k=v&…   extra URL parameters (e.g. subs=1)
+//   --audio <file>  mux this audio track into the video
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
 import { mkdirSync } from "node:fs";
@@ -18,11 +21,14 @@ const opt = (name, dflt) => {
 };
 const pagePath = opt("page", "film/index.html");
 const sub = Math.max(1, Number(opt("sub", 1)));
+const [W, H] = opt("size", "1920x1080").split("x").map(Number);
+const query = opt("query", "");
+const audio = opt("audio", "");
 const [mode = "stills", out = "out/stills", ...rest] = argv;
-const url = pathToFileURL(resolve(pagePath)).href + "?render=1";
+const url = pathToFileURL(resolve(pagePath)).href + "?render=1" + (query ? `&${query}` : "");
 
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
-const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+const page = await browser.newPage({ viewport: { width: W, height: H } });
 await page.goto(url, { waitUntil: "networkidle" });
 await page.evaluate(async () => {
   await Promise.all([...document.fonts].map(f => f.load().catch(() => {})));
@@ -45,6 +51,7 @@ if (mode === "stills") {
   const blur = sub > 1 ? ["-vf", `tmix=frames=${sub},select=eq(mod(n\\,${sub})\\,${sub - 1}),setpts=N/${fps}/TB`] : [];
   const ff = spawn("ffmpeg", [
     "-loglevel", "error", "-y", "-f", "image2pipe", "-framerate", String(fps * sub), "-i", "-",
+    ...(audio ? ["-i", audio, "-map", "0:v", "-map", "1:a", "-c:a", "aac", "-b:a", "192k", "-shortest"] : []),
     ...blur, "-r", String(fps),
     "-c:v", "libx264", "-preset", "slow", "-crf", "15", "-pix_fmt", "yuv420p", "-movflags", "+faststart", out,
   ], { stdio: ["pipe", "inherit", "inherit"] });

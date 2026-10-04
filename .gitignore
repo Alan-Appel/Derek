@@ -1,2 +1,6 @@
 node_modules/
 out/
+.env
+.env.*
+# muestras de voz originales: fuera del repositorio
+video/audio/referencias/

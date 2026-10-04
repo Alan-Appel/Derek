@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Derek — Presentación</title>
+<style>
+  /*
+   * Derek — video de presentación (vertical 1080×1920).
+   * Cada fotograma es render(t). Los tiempos salen de timeline.js (tools/vo-build.mjs),
+   * que usa la duración real de cada toma de voz cuando existe.
+   * ?subs=1 incrusta subtítulos.
+   */
+  @font-face { font-family: "Manrope"; font-weight: 200 800; font-display: block; src: url("../film/fonts/manrope-latin.woff2") format("woff2"); }
+  :root {
+    --paper: #F7F7F2; --ink: #171918; --accent: #527567; --accent-soft: #E3ECE7;
+    --muted: #7D807A; --line: #E2E2DA; --card: #FFFFFF;
+    --page-bg: #E6E6DF; --ui: #85877f;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --page-bg: #0f100f; --ui: #77786f; } }
+  :root[data-theme="dark"] { --page-bg: #0f100f; --ui: #77786f; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { background: var(--page-bg); font-family: "Manrope", system-ui, sans-serif; color: var(--ink);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px; overflow: hidden; }
+  #viewport { width: 100%; flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  #frame { position: relative; overflow: hidden; background: var(--paper); flex: none; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,.12); }
+  #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; overflow: hidden; background: var(--paper); }
+  .scene { position: absolute; inset: 0; will-change: opacity, transform; }
+  .a { position: absolute; will-change: transform, opacity; }
+
+  /* shared pieces */
+  .label { left: 90px; top: 220px; display: flex; align-items: center; gap: 14px; font-size: 34px; font-weight: 650; letter-spacing: -0.01em; }
+  .label i { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); }
+  .demo { right: 90px; top: 232px; font-size: 22px; font-weight: 500; color: var(--muted); letter-spacing: .01em; }
+  .card { background: var(--card); border-radius: 26px; box-shadow: 0 1px 0 var(--line), 0 0 0 1.5px var(--line), 0 18px 40px rgba(23,25,24,.06); }
+  .ico { width: 64px; height: 64px; border-radius: 18px; background: var(--accent-soft); flex: none; display: grid; place-items: center; }
+  .ico svg { width: 32px; height: 32px; stroke: var(--accent); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .h { font-weight: 650; letter-spacing: -0.035em; line-height: 1.04; }
+  .sub { color: var(--muted); }
+  .wm { color: var(--ink); }
+
+  /* tareas */
+  .task { width: 470px; height: 128px; display: flex; align-items: center; gap: 20px; padding: 0 26px; }
+  .task b { display: block; font-size: 25px; font-weight: 650; letter-spacing: -0.01em; white-space: nowrap; }
+  .task span { display: block; font-size: 21px; color: var(--muted); margin-top: 4px; white-space: nowrap; }
+  .task .badge { position: absolute; right: -12px; top: -12px; min-width: 42px; height: 42px; border-radius: 21px; background: var(--ink); color: var(--paper); font-size: 20px; font-weight: 700; display: grid; place-items: center; padding: 0 10px; }
+  .task .ok { position: absolute; right: 26px; top: 40px; width: 46px; height: 46px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; }
+  .task .ok svg { width: 24px; height: 24px; stroke: #fff; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* flows */
+  .msg { left: 90px; width: 900px; padding: 30px 32px; display: flex; gap: 22px; }
+  .avatar { width: 68px; height: 68px; border-radius: 50%; background: #D9D4C7; flex: none; display: grid; place-items: center; font-size: 28px; font-weight: 700; color: #5d5a50; }
+  .msg .who { font-size: 22px; color: var(--muted); font-weight: 600; }
+  .msg .txt { font-size: 30px; font-weight: 550; margin-top: 6px; letter-spacing: -0.01em; line-height: 1.3; }
+  .conn { width: 4px; border-radius: 2px; background: var(--line); overflow: visible; }
+  .conn .fill { position: absolute; left: 0; top: 0; width: 4px; border-radius: 2px; background: var(--accent); }
+  .conn .dot { position: absolute; left: -8px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 7px rgba(82,117,103,.18); }
+  .step { font-size: 24px; font-weight: 600; color: var(--accent); white-space: nowrap; }
+  .tbl { left: 90px; width: 900px; padding: 30px 32px 18px; }
+  .tbl h4 { font-size: 26px; font-weight: 700; margin-bottom: 14px; }
+  .tr { display: grid; grid-template-columns: 1.2fr 1.2fr .9fr; font-size: 24px; padding: 18px 16px; border-top: 1.5px solid var(--line); border-radius: 12px; }
+  .tr.th { font-size: 19px; color: var(--muted); font-weight: 600; border-top: 0; padding-top: 4px; }
+  .pill { display: inline-block; font-size: 19px; font-weight: 650; padding: 6px 14px; border-radius: 999px; background: #EFEFE8; color: #55574f; justify-self: start; }
+  .pill.new { background: var(--accent); color: #fff; }
+  .notif { left: 90px; width: 900px; padding: 28px 32px; display: flex; gap: 22px; align-items: center; }
+  .notif b { font-size: 28px; font-weight: 700; display: block; }
+  .notif span { font-size: 23px; color: var(--muted); }
+  .notif em { margin-left: auto; font-style: normal; font-size: 20px; color: var(--muted); align-self: flex-start; }
+
+  /* agentes */
+  .agent { left: 90px; width: 900px; padding: 34px 34px 32px; }
+  .agent .top { display: flex; align-items: center; gap: 16px; font-size: 28px; font-weight: 700; }
+  .agent .state { margin-left: auto; font-size: 21px; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 10px; }
+  .agent .state i { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+  .chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .chip { font-size: 22px; font-weight: 600; padding: 10px 18px; border-radius: 14px; background: var(--accent-soft); color: #33503f; }
+  .agent hr { border: 0; border-top: 1.5px solid var(--line); margin: 28px 0 22px; }
+  .agent .rl { font-size: 20px; color: var(--muted); font-weight: 650; text-transform: uppercase; letter-spacing: .06em; }
+  .draft { font-size: 29px; line-height: 1.42; margin-top: 12px; min-height: 166px; letter-spacing: -0.005em; }
+  .draft .caret { display: inline-block; width: 3px; height: 32px; background: var(--ink); vertical-align: -5px; margin-left: 2px; }
+  .review { display: flex; align-items: center; gap: 14px; margin-top: 18px; }
+  .review .tag { font-size: 20px; font-weight: 650; color: #8a6a2f; background: #F6EEDC; padding: 8px 14px; border-radius: 10px; }
+  .btn { height: 68px; padding: 0 30px; border-radius: 20px; font-size: 24px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; position: relative; overflow: hidden; white-space: nowrap; }
+  .btn.ghost { box-shadow: inset 0 0 0 2px var(--line); }
+  .btn.solid { background: var(--ink); color: var(--paper); }
+  .btn .done { position: absolute; inset: 0; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+  /* apps */
+  .sys { left: 90px; top: 340px; width: 900px; height: 560px; overflow: hidden; display: flex; }
+  .sys .side { width: 190px; background: #F1F1EB; padding: 30px 22px; display: grid; align-content: start; gap: 12px; }
+  .sys .side i { display: block; height: 18px; border-radius: 9px; background: #E1E1D8; }
+  .sys .side i.on { background: var(--ink); width: 70%; }
+  .sys .main { flex: 1; padding: 30px 30px; }
+  .sys .main h4 { font-size: 27px; font-weight: 700; margin-bottom: 12px; }
+  .sys .tr { grid-template-columns: .7fr 1.3fr 1fr; font-size: 22px; padding: 16px 12px; }
+  .phone { left: 590px; top: 700px; width: 380px; height: 690px; border-radius: 58px; background: var(--ink); padding: 14px; box-shadow: 0 40px 80px rgba(23,25,24,.25); }
+  .phone .scr { width: 100%; height: 100%; border-radius: 46px; background: var(--paper); padding: 66px 28px 28px; position: relative; overflow: hidden; }
+  .phone .notch { position: absolute; left: 50%; top: 18px; width: 110px; height: 30px; border-radius: 15px; background: var(--ink); transform: translateX(-50%); }
+  .phone h5 { font-size: 30px; font-weight: 750; letter-spacing: -0.02em; }
+  .phone .meta { font-size: 19px; color: var(--muted); margin-top: 4px; }
+  .steps { margin-top: 28px; display: grid; gap: 0; }
+  .st { display: flex; gap: 16px; align-items: flex-start; font-size: 22px; font-weight: 600; color: #a3a59d; height: 74px; position: relative; }
+  .st i { width: 30px; height: 30px; border-radius: 50%; border: 3px solid #cfd0c8; flex: none; background: var(--paper); position: relative; z-index: 1; }
+  .st::before { content: ""; position: absolute; left: 13.5px; top: 30px; width: 3px; height: 44px; background: #e0e1da; }
+  .st:last-child::before { display: none; }
+  .st.on { color: var(--ink); } .st.on i { border-color: var(--accent); background: var(--accent); }
+  .phone .btn { position: absolute; left: 28px; right: 28px; bottom: 30px; height: 72px; font-size: 22px; }
+  .sync { font-size: 22px; font-weight: 650; color: var(--accent); white-space: nowrap; display: flex; gap: 10px; align-items: center; }
+  .sync i { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+
+  /* web */
+  .browser { left: 90px; top: 340px; width: 900px; height: 1010px; overflow: hidden; }
+  .browser .bar { height: 76px; background: #F1F1EB; display: flex; align-items: center; gap: 10px; padding: 0 26px; }
+  .browser .bar i { width: 14px; height: 14px; border-radius: 50%; background: #d8d8cf; }
+  .browser .url { margin-left: 18px; flex: 1; height: 44px; border-radius: 22px; background: #fff; font-size: 20px; color: var(--muted); display: flex; align-items: center; padding: 0 20px; }
+  .site { padding: 40px 44px; }
+  .site nav { display: flex; justify-content: space-between; font-size: 22px; font-weight: 700; }
+  .site nav span { color: var(--muted); font-weight: 500; }
+  .site .hero { margin-top: 44px; height: 250px; border-radius: 22px; background: linear-gradient(135deg, #E9E6DC, #D9D4C7); padding: 36px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .site .hero b { font-size: 44px; font-weight: 750; letter-spacing: -0.03em; line-height: 1.05; }
+  .site .hero span { font-size: 22px; color: #5f5d55; margin-top: 8px; }
+  .form { margin-top: 36px; display: grid; gap: 16px; }
+  .form label { font-size: 19px; font-weight: 650; color: var(--muted); }
+  .field { height: 72px; border-radius: 16px; box-shadow: inset 0 0 0 2px var(--line); font-size: 25px; display: flex; align-items: center; padding: 0 22px; }
+  .field.tall { height: 120px; align-items: flex-start; padding-top: 22px; }
+  .form .btn { height: 76px; margin-top: 6px; }
+  .thanks { position: absolute; left: 44px; right: 44px; bottom: 60px; height: 260px; border-radius: 22px; background: var(--accent-soft); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .thanks b { font-size: 32px; font-weight: 750; color: #2f4a3c; }
+  .thanks span { font-size: 22px; color: #4c6658; }
+  .fly { left: 260px; width: 560px; padding: 22px 26px; display: flex; gap: 16px; align-items: center; font-size: 23px; font-weight: 650; }
+
+  /* valores */
+  .from { left: 90px; top: 470px; font-size: 44px; font-weight: 500; color: var(--muted); }
+  .py { left: 82px; top: 520px; font-size: 168px; }
+  .rule { left: 90px; top: 760px; height: 3px; width: 900px; background: var(--ink); transform-origin: 0 50%; }
+  .val { left: 90px; font-size: 76px; display: flex; gap: 26px; align-items: baseline; }
+  .val small { font-size: 26px; font-weight: 650; color: var(--accent); width: 46px; }
+
+  /* firma */
+  .lema { left: 0; right: 0; text-align: center; font-size: 58px; font-weight: 600; letter-spacing: -0.03em; }
+  .cta { left: 0; right: 0; text-align: center; font-size: 66px; }
+  .contact { left: 50%; font-size: 24px; font-weight: 650; color: var(--muted); padding: 18px 30px; border-radius: 999px; border: 2px dashed #c9cac1; white-space: nowrap; }
+
+  /* subtítulos */
+  #caption { position: absolute; left: 90px; right: 90px; top: 1462px; display: flex; justify-content: center; pointer-events: none; }
+  #caption span { background: var(--ink); color: var(--paper); font-size: 40px; font-weight: 600; line-height: 1.3; padding: 14px 26px; border-radius: 18px; text-align: center; letter-spacing: -0.01em; max-width: 900px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  #pending { position: absolute; left: 90px; bottom: 60px; font-size: 20px; font-weight: 600; color: #a0581f; }
+
+  #controls { width: 100%; max-width: 560px; display: flex; align-items: center; gap: 12px; color: var(--ui); font-size: 13px; font-variant-numeric: tabular-nums; flex: none; }
+  #controls button { font: inherit; color: inherit; background: none; border: 1px solid currentColor; border-radius: 999px; height: 32px; min-width: 32px; padding: 0 10px; cursor: pointer; flex: none; }
+  #scrub { flex: 1; accent-color: var(--accent); min-width: 0; }
+  body.render { padding: 0; background: var(--paper); }
+  body.render #controls { display: none; }
+  body.render #frame { border-radius: 0; box-shadow: none; }
+</style>
+<script src="timeline.js"></script>
+<script src="subs/cues.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="wordmark" viewBox="306 235 926 271">
+      <g fill="none" stroke="currentColor">
+        <path stroke-width="30" d="M 494 404 A 76 76 0 1 0 342 404 A 76 76 0 1 0 494 404"/>
+        <line x1="498" y1="491" x2="498" y2="250" stroke-width="31"/>
+        <mask id="e1" maskUnits="userSpaceOnUse" x="0" y="0" width="2000" height="1000"><rect width="2000" height="1000" fill="#fff"/><rect x="642" y="416" width="90" height="28" fill="#000"/></mask>
+        <path mask="url(#e1)" stroke-width="30" d="M 698 404 A 76 76 0 1 0 693.42 429.99"/>
+        <line x1="552" y1="403.5" x2="712.5" y2="403.5" stroke-width="25"/>
+        <line x1="753" y1="491" x2="753" y2="380" stroke-width="31"/>
+        <path stroke-width="31" d="M 753 420 L 753 378 A 50 50 0 0 1 803 328 L 833 328"/>
+        <mask id="e2" maskUnits="userSpaceOnUse" x="0" y="0" width="2000" height="1000"><rect width="2000" height="1000" fill="#fff"/><rect x="945.5" y="416" width="90" height="28" fill="#000"/></mask>
+        <path mask="url(#e2)" stroke-width="30" d="M 1001.5 404 A 76 76 0 1 0 996.92 429.99"/>
+        <line x1="855.5" y1="403.5" x2="1016" y2="403.5" stroke-width="25"/>
+        <line x1="1054" y1="491" x2="1054" y2="250" stroke-width="31"/>
+        <path d="M 1079 393 L 1107.5 393 L 1217 314.5 L 1168.75 314.5 L 1086.32 373.46 Q 1079 378.7 1079 387.7 Z" fill="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M 1079 401.25 L 1106 401.25 L 1216.5 491 L 1170 491 L 1085.99 422.77 Q 1079 417.1 1079 408.1 Z" fill="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      </g>
+    </symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+    <symbol id="i-sheet" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  </defs>
+</svg>
+
+<div id="viewport"><div id="frame"><div id="stage">
+
+  <!-- A · tareas dispersas → orden → Derek -->
+  <section class="scene" id="sA">
+    <div class="a h" id="aHead" style="left:90px;top:230px;font-size:92px">Tu empresa puede<br>trabajar mejor.</div>
+    <div class="a card task" data-i="0"><div class="ico"><svg><use href="#i-chat"/></svg></div><div><b>Consulta por WhatsApp</b><span>¿Tienen stock disponible?</span></div><div class="badge">3</div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
+    <div class="a card task" data-i="1"><div class="ico"><svg><use href="#i-mail"/></svg></div><div><b>Correo · Pedido #284</b><span>Confirmar la entrega</span></div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
+    <div class="a card task" data-i="2"><div class="ico"><svg><use href="#i-sheet"/></svg></div><div><b>ventas_final_v7.xlsx</b><span>Actualizar a mano</span></div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
+    <div class="a card task" data-i="3"><div class="ico"><svg><use href="#i-bell"/></svg></div><div><b>Recordatorio</b><span>Llamar al proveedor</span></div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
+    <div class="a card task" data-i="4"><div class="ico"><svg><use href="#i-doc"/></svg></div><div><b>Factura pendiente</b><span>Vence el viernes</span></div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
+    <div class="a card task" data-i="5"><div class="ico"><svg><use href="#i-clock"/></svg></div><div><b>Presupuesto sin responder</b><span>Hace 3 días</span></div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
+    <svg class="a wm" id="aMark" style="left:200px;top:1100px;width:680px;height:199px"><use href="#wordmark"/></svg>
+    <div class="a h" id="aLine" style="left:0;right:0;top:1330px;text-align:center;font-size:46px;font-weight:600;color:var(--muted)">Software para trabajar mejor.</div>
+  </section>
+
+  <!-- B · automatizaciones -->
+  <section class="scene" id="sB">
+    <div class="a label" id="bLabel"><i></i>Automatizaciones</div>
+    <div class="a demo" id="bDemo">Ejemplo ilustrativo</div>
+    <div class="a card msg" id="bMsg" style="top:330px"><div class="avatar">M</div><div><div class="who">María G. · WhatsApp</div><div class="txt">Hola, quiero un presupuesto para 20 bolsas de cemento.</div></div></div>
+    <div class="a conn" id="bC1" style="left:538px;top:542px;height:110px"><div class="fill"></div><div class="dot"></div></div>
+    <div class="a step" id="bS1" style="left:580px;top:578px">Se registra sola</div>
+    <div class="a card tbl" id="bTbl" style="top:664px">
+      <h4>Registro de consultas</h4>
+      <div class="tr th"><span>Cliente</span><span>Pedido</span><span>Estado</span></div>
+      <div class="tr" id="bRow"><span>María G.</span><span>20 bolsas</span><span class="pill new">Nueva</span></div>
+      <div class="tr"><span>Jorge A.</span><span>Pintura 4 L</span><span class="pill">Respondida</span></div>
+      <div class="tr"><span>Ana R.</span><span>Herramientas</span><span class="pill">Respondida</span></div>
+    </div>
+    <div class="a conn" id="bC2" style="left:538px;top:1060px;height:110px"><div class="fill"></div><div class="dot"></div></div>
+    <div class="a step" id="bS2" style="left:580px;top:1096px">Llega a la persona correcta</div>
+    <div class="a card notif" id="bNotif" style="top:1182px"><div class="ico"><svg><use href="#i-bell"/></svg></div><div><b>Laura · Ventas</b><span>Nueva consulta asignada: María G.</span></div><em>ahora</em></div>
+  </section>
+
+  <!-- C · agentes con IA -->
+  <section class="scene" id="sC">
+    <div class="a label" id="cLabel"><i></i>Agentes con IA</div>
+    <div class="a demo" id="cDemo">Ejemplo ilustrativo</div>
+    <div class="a card msg" id="cMsg" style="top:330px"><div class="avatar">M</div><div><div class="who">María G. · WhatsApp</div><div class="txt">Hola, quiero un presupuesto para 20 bolsas de cemento.</div></div></div>
+    <div class="a card agent" id="cAgent" style="top:580px">
+      <div class="top"><div class="ico" style="width:56px;height:56px"><svg><use href="#i-spark"/></svg></div>Agente de atención<div class="state" id="cState"><i></i><span>Analizando…</span></div></div>
+      <div class="chips"><span class="chip">Tipo: presupuesto</span><span class="chip">Producto: cemento × 20</span><span class="chip">Prioridad: alta</span></div>
+      <hr>
+      <div class="rl">Respuesta sugerida</div>
+      <div class="draft"><span id="cTyped"></span><span class="caret" id="cCaret"></span></div>
+      <div class="review"><span class="tag">Borrador · requiere revisión</span></div>
+      <div class="review" style="margin-top:22px"><span class="btn ghost">Editar</span><span class="btn solid" id="cSend" style="flex:1">Aprobar y enviar<span class="done" id="cDone"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Enviado</span></span></div>
+    </div>
+  </section>
+
+  <!-- D · apps y sistemas -->
+  <section class="scene" id="sD">
+    <div class="a label" id="dLabel"><i></i>Apps y sistemas</div>
+    <div class="a demo" id="dDemo">Ejemplo ilustrativo</div>
+    <div class="a card sys" id="dSys">
+      <div class="side"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+      <div class="main"><h4>Pedidos</h4>
+        <div class="tr th"><span>N.º</span><span>Cliente</span><span>Estado</span></div>
+        <div class="tr" id="dRow"><span>#284</span><span>María G.</span><span class="pill" id="dPill">Preparando</span></div>
+        <div class="tr"><span>#283</span><span>Jorge A.</span><span class="pill">En camino</span></div>
+        <div class="tr"><span>#282</span><span>Ana R.</span><span class="pill">Entregado</span></div>
+        <div class="tr"><span>#281</span><span>Luis P.</span><span class="pill">Entregado</span></div>
+      </div>
+    </div>
+    <div class="a sync" id="dSync" style="left:96px;top:930px"><i></i>Mismo pedido, en la app y en el sistema</div>
+    <div class="a phone" id="dPhone"><div class="scr"><div class="notch"></div>
+      <h5>Pedido #284</h5><div class="meta">María G. · 20 bolsas</div>
+      <div class="steps"><div class="st on"><i></i>Recibido</div><div class="st on" id="dSt2"><i></i>En preparación</div><div class="st" id="dSt3"><i></i>En camino</div><div class="st"><i></i>Entregado</div></div>
+      <span class="btn solid" id="dBtn">Marcar en camino<span class="done" id="dDone">Actualizado</span></span>
+    </div></div>
+  </section>
+
+  <!-- E · páginas web -->
+  <section class="scene" id="sE">
+    <div class="a label" id="eLabel"><i></i>Páginas web</div>
+    <div class="a demo" id="eDemo">Ejemplo ilustrativo</div>
+    <div class="a card browser" id="eBrowser">
+      <div class="bar"><i></i><i></i><i></i><div class="url">www.ejemplo.com.py</div></div>
+      <div class="site">
+        <nav>Comercial Ejemplo<span>Productos · Contacto</span></nav>
+        <div class="hero"><b>Materiales para tu obra</b><span>Pedí tu presupuesto en minutos.</span></div>
+        <div class="form" id="eForm">
+          <label>Nombre</label><div class="field" id="eName"></div>
+          <label>Mensaje</label><div class="field tall" id="eMsgF"></div>
+          <span class="btn solid" id="eSend">Enviar consulta</span>
+        </div>
+      </div>
+      <div class="thanks" id="eThanks"><b>¡Gracias, María!</b><span>Te respondemos muy pronto.</span></div>
+    </div>
+    <div class="a card fly" id="eFly"><div class="ico" style="width:52px;height:52px"><svg><use href="#i-chat"/></svg></div>Nueva consulta · al registro</div>
+  </section>
+
+  <!-- F · Paraguay y valores -->
+  <section class="scene" id="sF">
+    <div class="a from" id="fFrom">Desde</div>
+    <div class="a h py" id="fPy">Paraguay</div>
+    <div class="a rule" id="fRule"></div>
+    <div class="a h val" data-set="0" data-j="0"><small>01</small>Responsabilidad</div>
+    <div class="a h val" data-set="0" data-j="1"><small>02</small>Dedicación</div>
+    <div class="a h val" data-set="0" data-j="2"><small>03</small>Disciplina</div>
+    <div class="a h val" data-set="1" data-j="0"><small>—</small>Fe en Dios</div>
+    <div class="a h val" data-set="1" data-j="1"><small>—</small>Integridad</div>
+    <div class="a h val" data-set="1" data-j="2"><small>—</small>Compromiso</div>
+  </section>
+
+  <!-- G · firma y cierre -->
+  <section class="scene" id="sG">
+    <svg class="a wm" id="gMark" style="left:150px;top:700px;width:780px;height:228px"><use href="#wordmark"/></svg>
+    <div class="a lema" id="gLema" style="top:968px">Tecnología con propósito.</div>
+    <div class="a h cta" id="gCta" style="top:1030px">Contanos qué querés<br>mejorar en tu empresa.</div>
+    <div class="a contact" id="gContact" style="top:1250px">Contacto · pendiente de confirmar</div>
+  </section>
+
+  <div id="caption"><span id="capText"></span></div>
+  <div id="pending"></div>
+</div></div></div>
+<div id="controls">
+  <button id="play" aria-label="Reproducir / pausar">▶</button>
+  <span id="tc">0.0 s</span>
+  <input id="scrub" type="range" min="0" max="45" step="0.01" value="0" aria-label="Línea de tiempo">
+  <button id="subsBtn" aria-label="Subtítulos">CC</button>
+</div>
+<audio id="vo" src="audio/voiceover.wav" preload="auto"></audio>
+
+<script>
+(() => {
+  "use strict";
+  const TL = window.TIMELINE, CUES = window.CUES || [];
+  const DURATION = TL.duration;
+  const $ = id => document.getElementById(id);
+  const L = Object.fromEntries(TL.lines.map(l => [l.id, l]));
+
+  /* ---------------- easing ---------------- */
+  function bez(x1, y1, x2, y2) {
+    const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    return x => { if (x <= 0) return 0; if (x >= 1) return 1; let t = x;
+      for (let i = 0; i < 8; i++) { const e = ((ax * t + bx) * t + cx) * t - x, d = (3 * ax * t + 2 * bx) * t + cx; if (Math.abs(e) < 1e-6 || !d) break; t -= e / d; }
+      return ((ay * t + by) * t + cy) * t; };
+  }
+  // Sober motion: one travel curve, one arrival curve, a lightly damped spring for objects landing.
+  const E = { travel: bez(0.65, 0, 0.35, 1), arrive: bez(0.16, 1, 0.3, 1), leave: bez(0.5, 0, 0.75, 0) };
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, p) => a + (b - a) * p;
+  const seg = (t, a, b, e = E.travel) => e(clamp((t - a) / (b - a)));
+  function spring(x, f = 1.6, z = 0.72) {
+    if (x <= 0) return 0; const w = 2 * Math.PI * f, wd = w * Math.sqrt(1 - z * z);
+    return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + (z * w / wd) * Math.sin(wd * x));
+  }
+  const sp = (t, a, f, z) => spring(t - a, f, z);
+  // reveal: fade + rise
+  const show = (el, p, y = 36, extra = "") => { el.style.opacity = clamp(p); el.style.transform = `translateY(${(1 - p) * y}px) ${extra}`; };
+
+  /* ---------------- scene windows ---------------- */
+  const PRE = 0.35;                             // scenes start a beat before their line
+  const GROUPS = [
+    ["sA", ["01-problema", "02-derek"]], ["sB", ["03-automatiza"]], ["sC", ["04-agentes"]],
+    ["sD", ["05-apps"]], ["sE", ["06-web"]], ["sF", ["07-paraguay", "08-fe"]], ["sG", ["09-lema", "10-cierre"]],
+  ].map(([id, lines], i, arr) => ({ id, el: $(id), lines, a: i === 0 ? 0 : L[lines[0]].start - PRE }));
+  GROUPS.forEach((g, i) => g.b = i < GROUPS.length - 1 ? GROUPS[i + 1].a : DURATION);
+  const OUT = 0.45;
+
+  /* ---------------- A · tareas ---------------- */
+  const tasks = [...document.querySelectorAll("#sA .task")];
+  const MESS = [[96, 520, -6], [520, 640, 5], [70, 800, 3], [500, 960, -4], [110, 1120, 6], [470, 1280, -3]];
+  function sceneA(t) {
+    const l1 = L["01-problema"], l2 = L["02-derek"];
+    show($("aHead"), seg(t, 0.15, 0.95, E.arrive) * (1 - seg(t, l2.start - 0.3, l2.start + 0.2, E.leave)), 40);
+    const order = seg(t, l2.start - 0.15, l2.start + 1.1, E.travel);
+    tasks.forEach((c, i) => {
+      const [mx, my, mr] = MESS[i];
+      const pin = sp(t, 0.5 + i * 0.28, 1.5, 0.7);
+      const drift = (1 - order) * Math.sin(t * 1.1 + i * 1.7) * 6;
+      const ox = 90, oy = 300 + i * 132;
+      const x = lerp(mx, ox, order), y = lerp(my, oy, order) + drift, r = lerp(mr, 0, order);
+      const w = lerp(470, 900, order);
+      c.style.left = `${x}px`; c.style.top = `${y}px`; c.style.width = `${w}px`;
+      c.style.opacity = clamp(pin * 1.4);
+      c.style.transform = `translateY(${(1 - clamp(pin)) * 50}px) rotate(${r}deg) scale(${lerp(0.92, 1, clamp(pin))})`;
+      const ok = c.querySelector(".ok"); const okp = sp(t, l2.start + 0.9 + i * 0.09, 2.2, 0.6);
+      ok.style.opacity = clamp(okp); ok.style.transform = `scale(${Math.max(0, okp)})`;
+      const badge = c.querySelector(".badge");
+      if (badge) { badge.textContent = String(3 + Math.min(4, Math.floor(Math.max(0, t - 1.6) / 0.7))); badge.style.opacity = 1 - order; }
+    });
+    // the list settles, then Derek appears beneath it
+    const mk = seg(t, l2.start + 1.5, l2.start + 2.4, E.arrive);
+    $("aMark").style.opacity = mk; $("aMark").style.clipPath = `inset(0 ${100 - mk * 100}% 0 0)`;
+    show($("aLine"), seg(t, l2.start + 2.1, l2.start + 2.9, E.arrive), 24);
+  }
+
+  /* ---------------- B · automatizaciones ---------------- */
+  function conn(el, p) {
+    const h = el.offsetHeight; el.style.opacity = p > 0 ? 1 : 0;
+    el.querySelector(".fill").style.height = `${h * p}px`;
+    el.querySelector(".dot").style.top = `${h * p - 10}px`;
+    el.querySelector(".dot").style.opacity = p > 0 && p < 1 ? 1 : 0;
+  }
+  function sceneB(t) {
+    const s = L["03-automatiza"].start - PRE, k = clamp((L["03-automatiza"].dur + 0.9) / 3.6, 0.85, 1.6);
+    const T = x => s + x * k;
+    show($("bLabel"), seg(t, T(0), T(0.5), E.arrive), 20); show($("bDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
+    show($("bMsg"), sp(t, T(0.1), 1.5, 0.75), 50);
+    conn($("bC1"), seg(t, T(0.6), T(1.05))); show($("bS1"), seg(t, T(0.75), T(1.15), E.arrive), 10);
+    show($("bTbl"), sp(t, T(0.85), 1.5, 0.75), 40);
+    const row = $("bRow"), rp = seg(t, T(1.1), T(1.5), E.arrive);
+    row.style.opacity = rp; row.style.transform = `translateX(${(1 - rp) * -40}px)`;
+    row.style.background = `rgba(82,117,103,${0.12 * (1 - seg(t, T(2.2), T(3.0)))})`;
+    conn($("bC2"), seg(t, T(1.55), T(2.0))); show($("bS2"), seg(t, T(1.7), T(2.1), E.arrive), 10);
+    show($("bNotif"), sp(t, T(1.9), 1.7, 0.6), 40);
+  }
+
+  /* ---------------- C · agentes ---------------- */
+  const REPLY = "Hola, María. Gracias por escribirnos. Te preparamos el presupuesto por 20 bolsas y te lo enviamos hoy.";
+  const chips = [...document.querySelectorAll("#sC .chip")];
+  function sceneC(t) {
+    const l = L["04-agentes"], s = l.start - PRE, k = clamp((l.dur + 0.9) / 4.9, 0.85, 1.6);
+    const T = x => s + x * k;
+    show($("cLabel"), seg(t, T(0), T(0.5), E.arrive), 20); show($("cDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
+    show($("cMsg"), seg(t, T(0), T(0.4), E.arrive), 30);
+    show($("cAgent"), sp(t, T(0.2), 1.5, 0.75), 50);
+    const analysed = t > T(1.1);
+    $("cState").querySelector("span").textContent = analysed ? "Listo" : "Analizando…";
+    $("cState").querySelector("i").style.opacity = analysed ? 1 : 0.35 + 0.65 * Math.abs(Math.sin(t * 6));
+    chips.forEach((c, i) => { const p = sp(t, T(1.1 + i * 0.14), 2, 0.65); c.style.opacity = clamp(p); c.style.transform = `scale(${lerp(0.85, 1, clamp(p))})`; });
+    const n = Math.floor(REPLY.length * seg(t, T(1.5), T(3.4), x => x));
+    $("cTyped").textContent = REPLY.slice(0, n);
+    $("cCaret").style.opacity = n < REPLY.length && t > T(1.45) ? 1 : 0;
+    const press = t > T(3.75) && t < T(3.9) ? 0.96 : 1;
+    $("cSend").style.transform = `scale(${press})`;
+    const d = seg(t, T(3.85), T(4.15), E.arrive);
+    $("cDone").style.clipPath = `inset(0 ${100 - d * 100}% 0 0)`;
+  }
+
+  /* ---------------- D · apps y sistemas ---------------- */
+  function sceneD(t) {
+    const l = L["05-apps"], s = l.start - PRE, k = clamp((l.dur + 0.9) / 4.5, 0.85, 1.6);
+    const T = x => s + x * k;
+    show($("dLabel"), seg(t, T(0), T(0.5), E.arrive), 20); show($("dDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
+    show($("dSys"), sp(t, T(0.05), 1.5, 0.75), 50);
+    show($("dPhone"), sp(t, T(0.45), 1.4, 0.72), 120);
+    const tap = T(2.0), up = seg(t, tap + 0.1, tap + 0.4, E.arrive);
+    $("dBtn").style.transform = `scale(${t > tap && t < tap + 0.14 ? 0.96 : 1})`;
+    $("dDone").style.clipPath = `inset(0 ${100 - up * 100}% 0 0)`;
+    $("dSt3").classList.toggle("on", up > 0.5);
+    const synced = seg(t, tap + 0.35, tap + 0.6, E.arrive);
+    $("dPill").textContent = synced > 0.5 ? "En camino" : "Preparando";
+    $("dPill").classList.toggle("new", synced > 0.5);
+    $("dRow").style.background = `rgba(82,117,103,${0.14 * synced})`;
+    show($("dSync"), seg(t, tap + 0.55, tap + 1.0, E.arrive), 14);
+  }
+
+  /* ---------------- E · web ---------------- */
+  const NAME = "María G.", MSG = "Quiero un presupuesto para 20 bolsas.";
+  function sceneE(t) {
+    const l = L["06-web"], s = l.start - PRE, k = clamp((l.dur + 0.9) / 4.3, 0.85, 1.6);
+    const T = x => s + x * k;
+    show($("eLabel"), seg(t, T(0), T(0.5), E.arrive), 20); show($("eDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
+    show($("eBrowser"), sp(t, T(0.05), 1.5, 0.75), 60);
+    $("eName").textContent = NAME.slice(0, Math.floor(NAME.length * seg(t, T(0.6), T(1.0), x => x)));
+    $("eMsgF").textContent = MSG.slice(0, Math.floor(MSG.length * seg(t, T(1.05), T(2.1), x => x)));
+    $("eSend").style.transform = `scale(${t > T(2.3) && t < T(2.44) ? 0.97 : 1})`;
+    const th = seg(t, T(2.45), T(2.85), E.arrive);
+    show($("eThanks"), th, 30);
+    $("eForm").style.opacity = 1 - th * 0.92;
+    const f = seg(t, T(2.75), T(3.6), E.travel);
+    $("eFly").style.top = `${lerp(1180, 250, f)}px`;
+    $("eFly").style.opacity = f > 0 ? clamp(seg(t, T(2.75), T(2.95)) * (1 - seg(t, T(3.45), T(3.7)))) : 0;
+    $("eFly").style.transform = `scale(${lerp(1, 0.9, f)})`;
+  }
+
+  /* ---------------- F · Paraguay y valores ---------------- */
+  const vals = [...document.querySelectorAll("#sF .val")];
+  function sceneF(t) {
+    const l7 = L["07-paraguay"], l8 = L["08-fe"], s = l7.start - PRE;
+    show($("fFrom"), seg(t, s, s + 0.6, E.arrive), 24);
+    show($("fPy"), seg(t, s + 0.15, s + 0.95, E.arrive), 50);
+    $("fRule").style.transform = `scaleX(${seg(t, s + 0.6, s + 1.4, E.travel)})`;
+    // each value lands as it is spoken (they close the sentence)
+    const at0 = [0.5, 0.68, 0.84].map(f => l7.start + l7.dur * f - 0.25);
+    const at1 = [0.12, 0.55, 0.85].map(f => l8.start + l8.dur * f - 0.25);
+    const swap = seg(t, l8.start - 0.3, l8.start + 0.2, E.leave);
+    vals.forEach(v => {
+      const set = +v.dataset.set, j = +v.dataset.j;
+      v.style.top = `${830 + j * 132}px`;
+      const p = set === 0 ? seg(t, at0[j], at0[j] + 0.6, E.arrive) * (1 - swap) : seg(t, at1[j], at1[j] + 0.6, E.arrive);
+      v.style.opacity = p;
+      v.style.transform = `translateX(${(1 - p) * (set === 0 && swap > 0 ? -60 : 50)}px)`;
+    });
+  }
+
+  /* ---------------- G · firma ---------------- */
+  function sceneG(t) {
+    const l9 = L["09-lema"], l10 = L["10-cierre"], s = l9.start - PRE;
+    const mk = seg(t, s, s + 1.0, E.travel);
+    const up = seg(t, l10.start - 0.3, l10.start + 0.6, E.travel);
+    const m = $("gMark");
+    m.style.clipPath = `inset(0 ${100 - mk * 100}% 0 0)`;
+    m.style.transform = `translateY(${-300 * up}px) scale(${lerp(1, 0.78, up)})`;
+    const lp = seg(t, s + 0.7, s + 1.4, E.arrive);
+    $("gLema").style.opacity = lp; $("gLema").style.transform = `translateY(${(1 - lp) * 24 - 300 * up + 16 * up}px)`;
+    show($("gCta"), seg(t, l10.start, l10.start + 0.8, E.arrive), 40);
+    const cp = seg(t, l10.start + 0.7, l10.start + 1.3, E.arrive);
+    $("gContact").style.opacity = cp; $("gContact").style.transform = `translate(-50%, ${(1 - cp) * 20}px)`;
+  }
+
+  const SCENES = { sA: sceneA, sB: sceneB, sC: sceneC, sD: sceneD, sE: sceneE, sF: sceneF, sG: sceneG };
+
+  /* ---------------- render ---------------- */
+  const SUBS = new URLSearchParams(location.search).has("subs");
+  let subsOn = SUBS;
+  function render(t) {
+    for (const g of GROUPS) {
+      const on = t >= g.a - 0.001 && t < g.b + 0.001;
+      g.el.style.visibility = on ? "visible" : "hidden";
+      if (!on) continue;
+      // every scene leaves the same way: a short lift and fade into the next
+      const o = g.id === "sG" ? 0 : seg(t, g.b - OUT, g.b, E.leave);
+      g.el.style.opacity = 1 - o;
+      g.el.style.transform = `translateY(${-40 * o}px)`;
+      SCENES[g.id](t);
+    }
+    const cue = subsOn ? CUES.find(c => t >= c.a && t < c.b) : null;
+    $("capText").textContent = cue ? cue.text : "";
+    $("caption").style.visibility = cue ? "visible" : "hidden";
+    $("pending").textContent = TL.pending.length && !document.body.classList.contains("render") ? "Locución pendiente · tiempos estimados" : "";
+  }
+
+  /* ---------------- player ---------------- */
+  const stage = $("stage"), frame = $("frame"), viewport = $("viewport"), scrub = $("scrub"), tc = $("tc"), playBtn = $("play"), vo = $("vo");
+  const params = new URLSearchParams(location.search), RENDER = params.has("render");
+  if (RENDER) document.body.classList.add("render");
+  scrub.max = DURATION;
+  let hasAudio = !TL.pending.length;
+  vo.addEventListener("error", () => { hasAudio = false; });
+  function fit() {
+    const k = RENDER ? 1 : Math.min(viewport.clientWidth / 1080, viewport.clientHeight / 1920);
+    frame.style.width = `${1080 * k}px`; frame.style.height = `${1920 * k}px`; stage.style.transform = `scale(${k})`;
+  }
+  addEventListener("resize", fit); fit();
+  let t = Number(params.get("t")) || 0, playing = false, last = null;
+  function showT(time) { t = clamp(time, 0, DURATION); render(t); scrub.value = t; tc.textContent = `${t.toFixed(1)} s`; }
+  function tick(now) {
+    if (playing) {
+      if (hasAudio && !vo.paused) showT(vo.currentTime);
+      else if (last != null) showT(t + (now - last) / 1000);
+      if (t >= DURATION) { playing = false; playBtn.textContent = "▶"; vo.pause(); }
+    }
+    last = now; requestAnimationFrame(tick);
+  }
+  function setPlaying(p) {
+    playing = p; playBtn.textContent = p ? "❚❚" : "▶";
+    if (hasAudio) { if (p) { vo.currentTime = t; vo.play().catch(() => { hasAudio = false; }); } else vo.pause(); }
+  }
+  playBtn.addEventListener("click", () => { if (t >= DURATION) t = 0; setPlaying(!playing); });
+  scrub.addEventListener("input", () => { setPlaying(false); showT(Number(scrub.value)); });
+  $("subsBtn").addEventListener("click", () => { subsOn = !subsOn; $("subsBtn").style.opacity = subsOn ? 1 : 0.5; render(t); });
+  $("subsBtn").style.opacity = subsOn ? 1 : 0.5;
+  addEventListener("keydown", e => { if (e.code === "Space") { e.preventDefault(); playBtn.click(); } });
+  window.__film = { duration: DURATION, seek: s => showT(s) };
+  document.fonts.ready.then(() => showT(t));
+  showT(t);
+  if (!RENDER) requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

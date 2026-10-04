@@ -1,0 +1,47 @@
+1
+00:00:00,800 --> 00:00:03,320
+Tu empresa tiene ideas para crecer.
+
+2
+00:00:03,320 --> 00:00:06,200
+Pero también tareas que consumen tiempo.
+
+3
+00:00:06,750 --> 00:00:10,950
+En Derek desarrollamos software para ayudarte a trabajar mejor.
+
+4
+00:00:11,500 --> 00:00:14,100
+Automatizamos procesos repetitivos.
+
+5
+00:00:14,650 --> 00:00:18,650
+Y creamos agentes con inteligencia artificial para tareas concretas.
+
+6
+00:00:19,200 --> 00:00:22,800
+También aplicaciones y sistemas para organizar tu operación.
+
+7
+00:00:23,350 --> 00:00:26,750
+Y páginas web para presentar tu negocio y recibir consultas.
+
+8
+00:00:27,300 --> 00:00:30,554
+Desde Paraguay, combinamos tecnología con responsabilidad,
+
+9
+00:00:30,554 --> 00:00:31,900
+dedicación y disciplina.
+
+10
+00:00:32,450 --> 00:00:37,250
+Nuestra fe en Dios nos impulsa a trabajar con integridad y servir con compromiso.
+
+11
+00:00:37,800 --> 00:00:40,400
+Derek. Tecnología con propósito.
+
+12
+00:00:40,950 --> 00:00:43,750
+Contanos qué querés mejorar en tu empresa.
