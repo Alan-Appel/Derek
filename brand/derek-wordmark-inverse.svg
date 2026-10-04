@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="246 175 1046 391" role="img" aria-label="derek">
+  <rect x="246" y="175" width="1046" height="391" fill="#171917"/>
+  <g fill="none" stroke="currentColor" style="color:#F6F5EF" color="#F6F5EF">
+    <path stroke-width="30" d="M 494 404 A 76 76 0 1 0 342 404 A 76 76 0 1 0 494 404"/>
+    <line x1="498" y1="491" x2="498" y2="250" stroke-width="31"/>
+    <mask id="e1" maskUnits="userSpaceOnUse" x="0" y="0" width="2000" height="1000"><rect width="2000" height="1000" fill="#fff"/><rect x="642" y="416" width="90" height="28" fill="#000"/></mask>
+    <path mask="url(#e1)" stroke-width="30" d="M 698 404 A 76 76 0 1 0 693.42 429.99"/>
+    <line x1="552" y1="403.5" x2="712.5" y2="403.5" stroke-width="25"/>
+    <line x1="753" y1="491" x2="753" y2="380" stroke-width="31"/>
+    <path stroke-width="31" d="M 753 420 L 753 378 A 50 50 0 0 1 803 328 L 833 328"/>
+    <mask id="e2" maskUnits="userSpaceOnUse" x="0" y="0" width="2000" height="1000"><rect width="2000" height="1000" fill="#fff"/><rect x="945.5" y="416" width="90" height="28" fill="#000"/></mask>
+    <path mask="url(#e2)" stroke-width="30" d="M 1001.5 404 A 76 76 0 1 0 996.92 429.99"/>
+    <line x1="855.5" y1="403.5" x2="1016" y2="403.5" stroke-width="25"/>
+    <line x1="1054" y1="491" x2="1054" y2="250" stroke-width="31"/>
+    <path d="M 1079 393 L 1107.5 393 L 1217 314.5 L 1168.75 314.5 L 1086.32 373.46 Q 1079 378.7 1079 387.7 Z" fill="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M 1079 401.25 L 1106 401.25 L 1216.5 491 L 1170 491 L 1085.99 422.77 Q 1079 417.1 1079 408.1 Z" fill="currentColor" stroke-width="2" stroke-linejoin="round"/>
+  </g>
+</svg>

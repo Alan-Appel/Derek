@@ -1,0 +1,10 @@
+{
+  "name": "derek-motion-system",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "stills": "node tools/render.mjs stills out/stills",
+    "video": "node tools/render.mjs video out/derek-punto-de-convergencia.mp4 30",
+    "logo": "node tools/export-logo.mjs"
+  }
+}
