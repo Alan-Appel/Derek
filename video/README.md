@@ -1,6 +1,6 @@
 # Derek — video de presentación
 
-Pieza vertical de 1080 × 1920, a 30 fps y de unos 47 s según el habla estimada. Está armada según el brief
+Pieza vertical de 1080 × 1920, a 30 fps y de unos 42 s según el habla estimada. Está armada según el brief
 `Derek_video_brief_y_prompt.md`. La duración final la fija la locución real, porque los tiempos de cada escena
 salen de la duración de cada toma.
 
@@ -8,7 +8,8 @@ salen de la duración de cada toma.
 
 | Parte | Estado |
 |---|---|
-| Guion y reparto Alan / Adrián | Listo (`script.json`) |
+| Guion y reparto Alan / Adrián | Listo (`script.json`). Se quitó la línea de Paraguay y valores (pedido del 4/10) |
+| Dinámica tipo MagicPath | Lienzo infinito con cámara que viaja, un camino que conecta todo, texto cinético, resortes, cursor “Vos” y motion blur |
 | Escenas y animación | Listo para revisar (`index.html`) |
 | Subtítulos SRT/VTT | Listos con tiempos estimados; se regeneran con la voz real |
 | Previsualización MP4, con y sin subtítulos | Sin voz y con tiempos estimados |
@@ -26,8 +27,8 @@ Si existe `audio/voiceover.wav`, la vista previa se reproduce con la voz sincron
 ## Voces con Fish Audio
 
 La cuenta conectada tiene el plan gratuito y 12.000 créditos. Clonar una voz no tiene costo. Generar voz cuesta
-1 crédito por byte de texto. El guion completo ocupa **610 bytes** (Alan 388, Adrián 222), así que una toma completa
-consume unos 610 créditos. Con el saldo actual alcanzan las dos muestras de prueba y varias tomas completas.
+1 crédito por byte de texto. El guion completo ocupa **525 bytes**, así que una toma completa
+consume unos 525 créditos. Con el saldo actual alcanzan las dos muestras de prueba y varias tomas completas.
 El plan gratuito acepta hasta 500 bytes por llamada; cada frase va en una llamada separada, así que no hay problema.
 
 1. **Grabar** a cada uno por separado: de 60 a 120 s de habla natural, en un lugar silencioso, sin música ni eco.
@@ -76,8 +77,13 @@ Sin `--audio`, el MP4 sale sin sonido, como en la previsualización actual.
   son ficticios a propósito. No hay clientes, métricas ni testimonios.
 - **Guion:** el texto es el del brief. La única diferencia es que la frase de servicios se dividió en cuatro oraciones
   completas para alternar las voces (“Automatizamos…”, “Y creamos agentes…”, “También aplicaciones…”, “Y páginas web…”).
-- **La fe** aparece en la locución tal como está en el guion y, en pantalla, como valor: “Fe en Dios · Integridad · Compromiso”.
-  Falta confirmar si así quieren comunicarla.
+- **Sin la sección de Paraguay y valores** (pedido del 4/10). La frase de fe (Alan) se mantiene en la locución,
+  sobre la vista general de la red conectada, sin texto ni lista en pantalla. Si también hay que quitarla, basta con
+  borrar la línea `08-fe` de `script.json` y correr `node tools/vo-build.mjs`.
+- **Dinámica tipo MagicPath, con la paleta de Derek:** todas las escenas viven en un solo lienzo. La cámara viaja
+  entre ellas con movimientos rápidos, siguiendo un camino verde que se dibuja de tarea en tarea; un cursor “Vos”
+  aprueba, actualiza y envía; al final la cámara se aleja para mostrar todo conectado y el camino termina en el logo.
+  Sin colores nuevos, sin brillos ni partículas.
 - La pieza anterior, “Punto de convergencia” (`film/`), gira alrededor de la k. Después del comentario del fundador
   queda como exploración descartada para esta pieza.
 

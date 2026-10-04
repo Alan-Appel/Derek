@@ -1,19 +1,72 @@
 {
   "title": "Derek — presentación",
-  "note": "Reparto según el brief: Alan abre y presenta Derek; Adrián explica automatizaciones y agentes; Alan sigue con apps, sistemas y webs; Adrián presenta Paraguay y valores; Alan dice la frase de fe; Adrián, nombre y lema; Alan cierra. Duraciones 'est' estimadas a ~2,5 palabras/s hasta tener el audio real.",
+  "note": "Reparto: Alan abre y presenta Derek; Adrián explica automatizaciones y agentes; Alan sigue con apps, sistemas y webs y dice la frase de fe; Adrián, nombre y lema; Alan cierra. Se quitó la línea de Paraguay y valores (pedido del 4/10). Duraciones 'est' estimadas a ~2,5 palabras/s hasta tener el audio real.",
   "lead_in": 0.8,
   "gap": 0.55,
   "tail": 3.2,
   "lines": [
-    { "id": "01-problema",   "speaker": "alan",   "scene": "dispersas",   "est": 5.4, "text": "Tu empresa tiene ideas para crecer. Pero también tareas que consumen tiempo." },
-    { "id": "02-derek",      "speaker": "alan",   "scene": "orden",       "est": 4.2, "text": "En Derek desarrollamos software para ayudarte a trabajar mejor." },
-    { "id": "03-automatiza", "speaker": "adrian", "scene": "automatiza",  "est": 2.6, "text": "Automatizamos procesos repetitivos." },
-    { "id": "04-agentes",    "speaker": "adrian", "scene": "agentes",     "est": 4.0, "text": "Y creamos agentes con inteligencia artificial para tareas concretas." },
-    { "id": "05-apps",       "speaker": "alan",   "scene": "apps",        "est": 3.6, "text": "También aplicaciones y sistemas para organizar tu operación." },
-    { "id": "06-web",        "speaker": "alan",   "scene": "web",         "est": 3.4, "text": "Y páginas web para presentar tu negocio y recibir consultas." },
-    { "id": "07-paraguay",   "speaker": "adrian", "scene": "paraguay",    "est": 4.6, "text": "Desde Paraguay, combinamos tecnología con responsabilidad, dedicación y disciplina." },
-    { "id": "08-fe",         "speaker": "alan",   "scene": "fe",          "est": 4.8, "text": "Nuestra fe en Dios nos impulsa a trabajar con integridad y servir con compromiso." },
-    { "id": "09-lema",       "speaker": "adrian", "scene": "lema",        "est": 2.6, "text": "Derek. Tecnología con propósito." },
-    { "id": "10-cierre",     "speaker": "alan",   "scene": "cierre",      "est": 2.8, "text": "Contanos qué querés mejorar en tu empresa." }
+    {
+      "id": "01-problema",
+      "speaker": "alan",
+      "scene": "dispersas",
+      "est": 5.4,
+      "text": "Tu empresa tiene ideas para crecer. Pero también tareas que consumen tiempo."
+    },
+    {
+      "id": "02-derek",
+      "speaker": "alan",
+      "scene": "orden",
+      "est": 4.2,
+      "text": "En Derek desarrollamos software para ayudarte a trabajar mejor."
+    },
+    {
+      "id": "03-automatiza",
+      "speaker": "adrian",
+      "scene": "automatiza",
+      "est": 2.6,
+      "text": "Automatizamos procesos repetitivos."
+    },
+    {
+      "id": "04-agentes",
+      "speaker": "adrian",
+      "scene": "agentes",
+      "est": 4.0,
+      "text": "Y creamos agentes con inteligencia artificial para tareas concretas."
+    },
+    {
+      "id": "05-apps",
+      "speaker": "alan",
+      "scene": "apps",
+      "est": 3.6,
+      "text": "También aplicaciones y sistemas para organizar tu operación."
+    },
+    {
+      "id": "06-web",
+      "speaker": "alan",
+      "scene": "web",
+      "est": 3.4,
+      "text": "Y páginas web para presentar tu negocio y recibir consultas."
+    },
+    {
+      "id": "08-fe",
+      "speaker": "alan",
+      "scene": "fe",
+      "est": 4.8,
+      "text": "Nuestra fe en Dios nos impulsa a trabajar con integridad y servir con compromiso."
+    },
+    {
+      "id": "09-lema",
+      "speaker": "adrian",
+      "scene": "lema",
+      "est": 2.6,
+      "text": "Derek. Tecnología con propósito."
+    },
+    {
+      "id": "10-cierre",
+      "speaker": "alan",
+      "scene": "cierre",
+      "est": 2.8,
+      "text": "Contanos qué querés mejorar en tu empresa."
+    }
   ]
 }

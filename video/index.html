@@ -27,7 +27,15 @@
   #viewport { width: 100%; flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; }
   #frame { position: relative; overflow: hidden; background: var(--paper); flex: none; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,.12); }
   #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; overflow: hidden; background: var(--paper); }
-  .scene { position: absolute; inset: 0; will-change: opacity, transform; }
+  #world { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-origin: 0 0; will-change: transform; }
+  .frame { position: absolute; width: 1080px; height: 1920px; }
+  #paths { position: absolute; left: 0; top: 0; width: 1px; height: 1px; overflow: visible; }
+  .w { display: inline-block; overflow: hidden; vertical-align: top; padding: .08em .04em .16em; margin: -.08em -.04em -.16em; }
+  .wi { display: inline-block; will-change: transform; }
+  .cursor { position: absolute; left: 0; top: 0; z-index: 5; will-change: transform; }
+  .cursor svg { width: 46px; height: 46px; display: block; filter: drop-shadow(0 6px 10px rgba(23,25,24,.25)); }
+  .cursor span { position: absolute; left: 34px; top: 38px; background: var(--ink); color: var(--paper); font-size: 22px; font-weight: 700; padding: 7px 14px; border-radius: 12px 12px 12px 4px; white-space: nowrap; }
+  .ripple { position: absolute; width: 140px; height: 140px; margin: -70px 0 0 -70px; border-radius: 50%; border: 4px solid var(--accent); z-index: 4; pointer-events: none; }
   .a { position: absolute; will-change: transform, opacity; }
 
   /* shared pieces */
@@ -131,12 +139,6 @@
   .thanks span { font-size: 22px; color: #4c6658; }
   .fly { left: 260px; width: 560px; padding: 22px 26px; display: flex; gap: 16px; align-items: center; font-size: 23px; font-weight: 650; }
 
-  /* valores */
-  .from { left: 90px; top: 470px; font-size: 44px; font-weight: 500; color: var(--muted); }
-  .py { left: 82px; top: 520px; font-size: 168px; }
-  .rule { left: 90px; top: 760px; height: 3px; width: 900px; background: var(--ink); transform-origin: 0 50%; }
-  .val { left: 90px; font-size: 76px; display: flex; gap: 26px; align-items: baseline; }
-  .val small { font-size: 26px; font-weight: 650; color: var(--accent); width: 46px; }
 
   /* firma */
   .lema { left: 0; right: 0; text-align: center; font-size: 58px; font-weight: 600; letter-spacing: -0.03em; }
@@ -190,9 +192,11 @@
 </svg>
 
 <div id="viewport"><div id="frame"><div id="stage">
+  <div id="world">
+  <svg id="paths" aria-hidden="true"></svg>
 
   <!-- A · tareas dispersas → orden → Derek -->
-  <section class="scene" id="sA">
+  <section class="frame" id="sA" style="left:0px;top:0px">
     <div class="a h" id="aHead" style="left:90px;top:230px;font-size:92px">Tu empresa puede<br>trabajar mejor.</div>
     <div class="a card task" data-i="0"><div class="ico"><svg><use href="#i-chat"/></svg></div><div><b>Consulta por WhatsApp</b><span>¿Tienen stock disponible?</span></div><div class="badge">3</div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
     <div class="a card task" data-i="1"><div class="ico"><svg><use href="#i-mail"/></svg></div><div><b>Correo · Pedido #284</b><span>Confirmar la entrega</span></div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
@@ -205,7 +209,7 @@
   </section>
 
   <!-- B · automatizaciones -->
-  <section class="scene" id="sB">
+  <section class="frame" id="sB" style="left:1300px;top:0px">
     <div class="a label" id="bLabel"><i></i>Automatizaciones</div>
     <div class="a demo" id="bDemo">Ejemplo ilustrativo</div>
     <div class="a card msg" id="bMsg" style="top:330px"><div class="avatar">M</div><div><div class="who">María G. · WhatsApp</div><div class="txt">Hola, quiero un presupuesto para 20 bolsas de cemento.</div></div></div>
@@ -224,7 +228,7 @@
   </section>
 
   <!-- C · agentes con IA -->
-  <section class="scene" id="sC">
+  <section class="frame" id="sC" style="left:1300px;top:2000px">
     <div class="a label" id="cLabel"><i></i>Agentes con IA</div>
     <div class="a demo" id="cDemo">Ejemplo ilustrativo</div>
     <div class="a card msg" id="cMsg" style="top:330px"><div class="avatar">M</div><div><div class="who">María G. · WhatsApp</div><div class="txt">Hola, quiero un presupuesto para 20 bolsas de cemento.</div></div></div>
@@ -237,10 +241,11 @@
       <div class="review"><span class="tag">Borrador · requiere revisión</span></div>
       <div class="review" style="margin-top:22px"><span class="btn ghost">Editar</span><span class="btn solid" id="cSend" style="flex:1">Aprobar y enviar<span class="done" id="cDone"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Enviado</span></span></div>
     </div>
+    <div class="cursor" id="curC"><svg viewBox="0 0 24 24"><path d="M3 2l7.5 19 2.6-7.9L21 10.5z" fill="#171918" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Vos</span></div><div class="ripple" id="curCR"></div>
   </section>
 
   <!-- D · apps y sistemas -->
-  <section class="scene" id="sD">
+  <section class="frame" id="sD" style="left:0px;top:2000px">
     <div class="a label" id="dLabel"><i></i>Apps y sistemas</div>
     <div class="a demo" id="dDemo">Ejemplo ilustrativo</div>
     <div class="a card sys" id="dSys">
@@ -259,10 +264,11 @@
       <div class="steps"><div class="st on"><i></i>Recibido</div><div class="st on" id="dSt2"><i></i>En preparación</div><div class="st" id="dSt3"><i></i>En camino</div><div class="st"><i></i>Entregado</div></div>
       <span class="btn solid" id="dBtn">Marcar en camino<span class="done" id="dDone">Actualizado</span></span>
     </div></div>
+    <div class="cursor" id="curD"><svg viewBox="0 0 24 24"><path d="M3 2l7.5 19 2.6-7.9L21 10.5z" fill="#171918" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Vos</span></div><div class="ripple" id="curDR"></div>
   </section>
 
   <!-- E · páginas web -->
-  <section class="scene" id="sE">
+  <section class="frame" id="sE" style="left:0px;top:4000px">
     <div class="a label" id="eLabel"><i></i>Páginas web</div>
     <div class="a demo" id="eDemo">Ejemplo ilustrativo</div>
     <div class="a card browser" id="eBrowser">
@@ -278,29 +284,18 @@
       </div>
       <div class="thanks" id="eThanks"><b>¡Gracias, María!</b><span>Te respondemos muy pronto.</span></div>
     </div>
+        <div class="cursor" id="curE"><svg viewBox="0 0 24 24"><path d="M3 2l7.5 19 2.6-7.9L21 10.5z" fill="#171918" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Vos</span></div><div class="ripple" id="curER"></div>
     <div class="a card fly" id="eFly"><div class="ico" style="width:52px;height:52px"><svg><use href="#i-chat"/></svg></div>Nueva consulta · al registro</div>
   </section>
 
-  <!-- F · Paraguay y valores -->
-  <section class="scene" id="sF">
-    <div class="a from" id="fFrom">Desde</div>
-    <div class="a h py" id="fPy">Paraguay</div>
-    <div class="a rule" id="fRule"></div>
-    <div class="a h val" data-set="0" data-j="0"><small>01</small>Responsabilidad</div>
-    <div class="a h val" data-set="0" data-j="1"><small>02</small>Dedicación</div>
-    <div class="a h val" data-set="0" data-j="2"><small>03</small>Disciplina</div>
-    <div class="a h val" data-set="1" data-j="0"><small>—</small>Fe en Dios</div>
-    <div class="a h val" data-set="1" data-j="1"><small>—</small>Integridad</div>
-    <div class="a h val" data-set="1" data-j="2"><small>—</small>Compromiso</div>
-  </section>
-
   <!-- G · firma y cierre -->
-  <section class="scene" id="sG">
+  <section class="frame" id="sG" style="left:1300px;top:4000px">
     <svg class="a wm" id="gMark" style="left:150px;top:700px;width:780px;height:228px"><use href="#wordmark"/></svg>
     <div class="a lema" id="gLema" style="top:968px">Tecnología con propósito.</div>
     <div class="a h cta" id="gCta" style="top:1030px">Contanos qué querés<br>mejorar en tu empresa.</div>
     <div class="a contact" id="gContact" style="top:1250px">Contacto · pendiente de confirmar</div>
   </section>
+  </div>
 
   <div id="caption"><span id="capText"></span></div>
   <div id="pending"></div>
@@ -320,6 +315,7 @@
   const DURATION = TL.duration;
   const $ = id => document.getElementById(id);
   const L = Object.fromEntries(TL.lines.map(l => [l.id, l]));
+  const NS = "http://www.w3.org/2000/svg";
 
   /* ---------------- easing ---------------- */
   function bez(x1, y1, x2, y2) {
@@ -328,8 +324,7 @@
       for (let i = 0; i < 8; i++) { const e = ((ax * t + bx) * t + cx) * t - x, d = (3 * ax * t + 2 * bx) * t + cx; if (Math.abs(e) < 1e-6 || !d) break; t -= e / d; }
       return ((ay * t + by) * t + cy) * t; };
   }
-  // Sober motion: one travel curve, one arrival curve, a lightly damped spring for objects landing.
-  const E = { travel: bez(0.65, 0, 0.35, 1), arrive: bez(0.16, 1, 0.3, 1), leave: bez(0.5, 0, 0.75, 0) };
+  const E = { travel: bez(0.65, 0, 0.35, 1), arrive: bez(0.16, 1, 0.3, 1), leave: bez(0.5, 0, 0.75, 0), whip: bez(0.83, 0, 0.17, 1), lin: x => x };
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, p) => a + (b - a) * p;
   const seg = (t, a, b, e = E.travel) => e(clamp((t - a) / (b - a)));
@@ -338,44 +333,141 @@
     return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + (z * w / wd) * Math.sin(wd * x));
   }
   const sp = (t, a, f, z) => spring(t - a, f, z);
-  // reveal: fade + rise
   const show = (el, p, y = 36, extra = "") => { el.style.opacity = clamp(p); el.style.transform = `translateY(${(1 - p) * y}px) ${extra}`; };
 
-  /* ---------------- scene windows ---------------- */
-  const PRE = 0.35;                             // scenes start a beat before their line
-  const GROUPS = [
-    ["sA", ["01-problema", "02-derek"]], ["sB", ["03-automatiza"]], ["sC", ["04-agentes"]],
-    ["sD", ["05-apps"]], ["sE", ["06-web"]], ["sF", ["07-paraguay", "08-fe"]], ["sG", ["09-lema", "10-cierre"]],
-  ].map(([id, lines], i, arr) => ({ id, el: $(id), lines, a: i === 0 ? 0 : L[lines[0]].start - PRE }));
-  GROUPS.forEach((g, i) => g.b = i < GROUPS.length - 1 ? GROUPS[i + 1].a : DURATION);
-  const OUT = 0.45;
+  /* ---------------- kinetic words: each word rises through its own mask ---------------- */
+  function split(el) {
+    if (el.classList.contains("label")) {      // keep the words together as one flex item
+      const sp_ = document.createElement("span");
+      for (const n of [...el.childNodes]) if (n.nodeType === 3) sp_.appendChild(n);
+      el.appendChild(sp_); el = sp_;
+    }
+    for (const n of [...el.childNodes]) {
+      if (n.nodeType !== 3) continue;
+      const frag = document.createDocumentFragment();
+      n.textContent.split(/(\s+)/).forEach(part => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+        const w = document.createElement("span"); w.className = "w";
+        const wi = document.createElement("span"); wi.className = "wi"; wi.textContent = part;
+        w.appendChild(wi); frag.appendChild(w);
+      });
+      n.replaceWith(frag);
+    }
+    return [...el.querySelectorAll(".wi")];
+  }
+  const KIN = {};
+  for (const id of ["aHead", "aLine", "bLabel", "cLabel", "dLabel", "eLabel", "gLema", "gCta"]) KIN[id] = split($(id));
+  function kin(id, t, tin, tout = 1e9, stagger = 0.07) {
+    const ws = KIN[id];
+    ws.forEach((w, i) => {
+      const pin = sp(t, tin + i * stagger, 1.4, 0.68), pout = seg(t, tout + i * stagger * 0.5, tout + i * stagger * 0.5 + 0.4, E.leave);
+      w.style.transform = `translateY(${(1 - pin) * 130 - pout * 150}%)`;
+    });
+  }
+
+  /* ---------------- canvas layout ---------------- */
+  // Each part of the business is a 1080×1920 frame on one canvas; a single path connects them.
+  const FR = { sA: [0, 0], sB: [1300, 0], sC: [1300, 2000], sD: [0, 2000], sE: [0, 4000], sG: [1300, 4000] };
+  const C = k => ({ x: FR[k][0] + 540, y: FR[k][1] + 880 });
+  const l = id => L[id];
+  const into = id => [l(id).start - 0.75, l(id).start + 0.2];   // camera travel window into a line's frame
+  const OVERVIEW = { s: 0.305, x: 1190, y: 2930 };
+  const ovIn = [l("08-fe").start - 0.55, l("08-fe").start + 0.85];
+  const ovOut = [l("09-lema").start - 0.75, l("09-lema").start + 0.25];
+  const CAM = [
+    [0, 1, C("sA")],
+    [into("03-automatiza")[0], 1, C("sA")], [into("03-automatiza")[1], 1, C("sB"), E.whip],
+    [into("04-agentes")[0], 1, C("sB")], [into("04-agentes")[1], 1, C("sC"), E.whip],
+    [into("05-apps")[0], 1, C("sC")], [into("05-apps")[1], 1, C("sD"), E.whip],
+    [into("06-web")[0], 1, C("sD")], [into("06-web")[1], 1, C("sE"), E.whip],
+    [ovIn[0], 1, C("sE")], [ovIn[1], OVERVIEW.s, OVERVIEW, E.whip],
+    [ovOut[0], OVERVIEW.s * 1.06, OVERVIEW, E.lin], [ovOut[1], 1, C("sG"), E.whip],
+    [DURATION, 1.035, C("sG"), E.lin],
+  ];
+  function camera(t) {
+    for (let i = 1; i < CAM.length; i++) {
+      const a = CAM[i - 1], b = CAM[i];
+      if (t <= b[0]) {
+        const p = (b[3] || E.travel)(clamp((t - a[0]) / Math.max(1e-6, b[0] - a[0])));
+        return { s: Math.exp(lerp(Math.log(a[1]), Math.log(b[1]), p)), x: lerp(a[2].x, b[2].x, p), y: lerp(a[2].y, b[2].y, p) };
+      }
+    }
+    const k = CAM[CAM.length - 1]; return { s: k[1], x: k[2].x, y: k[2].y };
+  }
+
+  // the path: tasks → automation → agent → apps → web → derek
+  const SEGS = [
+    { d: "M 990 700 C 1190 700 1190 435 1390 435", w: into("03-automatiza") },
+    { d: "M 1840 1332 C 1840 1700 1840 1980 1840 2330", w: into("04-agentes") },
+    { d: "M 1390 2900 C 1190 2900 1190 2620 990 2620", w: into("05-apps") },
+    { d: "M 780 3390 C 780 3800 540 3950 540 4340", w: into("06-web") },
+    { d: "M 990 4700 C 1240 4700 1200 4814 1450 4814", w: [ovIn[0] + 0.6, ovOut[1] - 0.3] },
+  ].map(sg => {
+    const p = document.createElementNS(NS, "path");
+    p.setAttribute("d", sg.d); p.setAttribute("fill", "none"); p.setAttribute("stroke", "var(--accent)");
+    p.setAttribute("stroke-width", 6); p.setAttribute("stroke-linecap", "round");
+    $("paths").appendChild(p);
+    return { ...sg, el: p, L: p.getTotalLength() };
+  });
+  const head = document.createElementNS(NS, "circle"); head.setAttribute("r", 11); head.setAttribute("fill", "var(--accent)");
+  const halo = document.createElementNS(NS, "circle"); halo.setAttribute("r", 26); halo.setAttribute("fill", "var(--accent)"); halo.setAttribute("opacity", ".16");
+  $("paths").append(halo, head);
+  const TOTAL = SEGS.reduce((a, s) => a + s.L, 0);
+  function pointOnNetwork(f) {             // f ∈ [0,1] along the whole path
+    let d = f * TOTAL;
+    for (const s of SEGS) { if (d <= s.L) return s.el.getPointAtLength(d); d -= s.L; }
+    const s = SEGS[SEGS.length - 1]; return s.el.getPointAtLength(s.L);
+  }
+
+  // cursor targets, in frame coordinates (layout offsets ignore transforms)
+  function posIn(el, frame) { let x = 0, y = 0, n = el; while (n && n !== frame) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return { x, y, w: el.offsetWidth, h: el.offsetHeight }; }
+  let TGT = null;
+  function targets() {
+    const c = posIn($("cSend"), $("sC")), d = posIn($("dBtn"), $("sD")), e = posIn($("eSend"), $("sE"));
+    TGT = { C: { x: c.x + c.w * 0.45, y: c.y + c.h * 0.55 }, D: { x: d.x + d.w * 0.5, y: d.y + d.h * 0.55 }, E: { x: e.x + e.w * 0.5, y: e.y + e.h * 0.55 } };
+  }
+  function cursor(id, t, from, to, arrive0, arrive1, click, leaveTo) {
+    const c = $(id), r = $(id + "R");
+    const p = seg(t, arrive0, arrive1, E.travel), q = seg(t, click + 0.35, click + 1.1, E.travel);
+    const arc = Math.sin(p * Math.PI) * 60;
+    let x = lerp(from.x, to.x, p) + arc, y = lerp(from.y, to.y, p) - arc * 0.5;
+    x = lerp(x, leaveTo.x, q); y = lerp(y, leaveTo.y, q);
+    const press = t > click && t < click + 0.14 ? 0.86 : 1;
+    c.style.opacity = clamp(seg(t, arrive0, arrive0 + 0.2) * (1 - seg(t, click + 0.8, click + 1.1)));
+    c.style.transform = `translate(${x}px, ${y}px) scale(${press})`;
+    const rp = seg(t, click, click + 0.55, E.arrive);
+    r.style.left = `${to.x}px`; r.style.top = `${to.y}px`;
+    r.style.opacity = rp > 0 && rp < 1 ? 1 - rp : 0;
+    r.style.transform = `scale(${lerp(0.2, 1.3, rp)})`;
+  }
 
   /* ---------------- A · tareas ---------------- */
   const tasks = [...document.querySelectorAll("#sA .task")];
   const MESS = [[96, 520, -6], [520, 640, 5], [70, 800, 3], [500, 960, -4], [110, 1120, 6], [470, 1280, -3]];
   function sceneA(t) {
-    const l1 = L["01-problema"], l2 = L["02-derek"];
-    show($("aHead"), seg(t, 0.15, 0.95, E.arrive) * (1 - seg(t, l2.start - 0.3, l2.start + 0.2, E.leave)), 40);
-    const order = seg(t, l2.start - 0.15, l2.start + 1.1, E.travel);
+    const l2 = l("02-derek");
+    kin("aHead", t, 0.15, l2.start - 0.35, 0.08);
+    const order = seg(t, l2.start - 0.15, l2.start + 1.0, E.travel);
     tasks.forEach((c, i) => {
       const [mx, my, mr] = MESS[i];
-      const pin = sp(t, 0.5 + i * 0.28, 1.5, 0.7);
-      const drift = (1 - order) * Math.sin(t * 1.1 + i * 1.7) * 6;
-      const ox = 90, oy = 300 + i * 132;
-      const x = lerp(mx, ox, order), y = lerp(my, oy, order) + drift, r = lerp(mr, 0, order);
-      const w = lerp(470, 900, order);
-      c.style.left = `${x}px`; c.style.top = `${y}px`; c.style.width = `${w}px`;
+      const pin = sp(t, 0.5 + i * 0.26, 1.7, 0.55);
+      const jitter = (1 - order) * Math.sin(t * 1.3 + i * 1.7) * 7;
+      const delay = i * 0.05, oi = seg(t, l2.start - 0.15 + delay, l2.start + 0.9 + delay, E.travel);
+      const x = lerp(mx, 90, oi), y = lerp(my, 300 + i * 132, oi) + jitter, r = lerp(mr, 0, oi);
+      c.style.left = `${x}px`; c.style.top = `${y}px`; c.style.width = `${lerp(470, 900, oi)}px`;
       c.style.opacity = clamp(pin * 1.4);
-      c.style.transform = `translateY(${(1 - clamp(pin)) * 50}px) rotate(${r}deg) scale(${lerp(0.92, 1, clamp(pin))})`;
-      const ok = c.querySelector(".ok"); const okp = sp(t, l2.start + 0.9 + i * 0.09, 2.2, 0.6);
+      c.style.transform = `translateY(${(1 - clamp(pin, 0, 1.2)) * 60}px) rotate(${r + (1 - clamp(pin)) * 8}deg) scale(${lerp(0.9, 1, clamp(pin, 0, 1.1))})`;
+      const ok = c.querySelector(".ok"); const okp = sp(t, l2.start + 0.85 + i * 0.08, 2.4, 0.5);
       ok.style.opacity = clamp(okp); ok.style.transform = `scale(${Math.max(0, okp)})`;
       const badge = c.querySelector(".badge");
-      if (badge) { badge.textContent = String(3 + Math.min(4, Math.floor(Math.max(0, t - 1.6) / 0.7))); badge.style.opacity = 1 - order; }
+      if (badge) { badge.textContent = String(3 + Math.min(4, Math.floor(Math.max(0, t - 1.6) / 0.7))); badge.style.opacity = 1 - order;
+        badge.style.transform = `scale(${1 + 0.25 * Math.max(0, Math.sin(Math.max(0, t - 1.6) / 0.7 * Math.PI)) * (1 - order)})`; }
     });
-    // the list settles, then Derek appears beneath it
-    const mk = seg(t, l2.start + 1.5, l2.start + 2.4, E.arrive);
-    $("aMark").style.opacity = mk; $("aMark").style.clipPath = `inset(0 ${100 - mk * 100}% 0 0)`;
-    show($("aLine"), seg(t, l2.start + 2.1, l2.start + 2.9, E.arrive), 24);
+    const mk = seg(t, l2.start + 1.4, l2.start + 2.2, E.arrive);
+    $("aMark").style.opacity = mk > 0 ? 1 : 0; $("aMark").style.clipPath = `inset(-5% ${100 - mk * 100}% -5% 0)`;
+    $("aMark").style.transform = `translateY(${(1 - mk) * 20}px)`;
+    kin("aLine", t, l2.start + 1.9, 1e9, 0.06);
   }
 
   /* ---------------- B · automatizaciones ---------------- */
@@ -386,48 +478,52 @@
     el.querySelector(".dot").style.opacity = p > 0 && p < 1 ? 1 : 0;
   }
   function sceneB(t) {
-    const s = L["03-automatiza"].start - PRE, k = clamp((L["03-automatiza"].dur + 0.9) / 3.6, 0.85, 1.6);
+    const ln = l("03-automatiza"), s = ln.start - 0.2, k = clamp((ln.dur + 0.9) / 3.6, 0.85, 1.6);
     const T = x => s + x * k;
-    show($("bLabel"), seg(t, T(0), T(0.5), E.arrive), 20); show($("bDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
-    show($("bMsg"), sp(t, T(0.1), 1.5, 0.75), 50);
-    conn($("bC1"), seg(t, T(0.6), T(1.05))); show($("bS1"), seg(t, T(0.75), T(1.15), E.arrive), 10);
-    show($("bTbl"), sp(t, T(0.85), 1.5, 0.75), 40);
-    const row = $("bRow"), rp = seg(t, T(1.1), T(1.5), E.arrive);
-    row.style.opacity = rp; row.style.transform = `translateX(${(1 - rp) * -40}px)`;
-    row.style.background = `rgba(82,117,103,${0.12 * (1 - seg(t, T(2.2), T(3.0)))})`;
-    conn($("bC2"), seg(t, T(1.55), T(2.0))); show($("bS2"), seg(t, T(1.7), T(2.1), E.arrive), 10);
-    show($("bNotif"), sp(t, T(1.9), 1.7, 0.6), 40);
+    kin("bLabel", t, T(0)); show($("bDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
+    show($("bMsg"), sp(t, T(0.05), 1.8, 0.55), 70);
+    conn($("bC1"), seg(t, T(0.55), T(1.0))); show($("bS1"), seg(t, T(0.7), T(1.1), E.arrive), 10);
+    show($("bTbl"), sp(t, T(0.8), 1.8, 0.55), 60);
+    const row = $("bRow"), rp = sp(t, T(1.05), 2.2, 0.5);
+    row.style.opacity = clamp(rp); row.style.transform = `translateX(${(1 - rp) * -60}px)`;
+    row.style.background = `rgba(82,117,103,${0.14 * (1 - seg(t, T(2.2), T(3.0)))})`;
+    conn($("bC2"), seg(t, T(1.5), T(1.95))); show($("bS2"), seg(t, T(1.65), T(2.05), E.arrive), 10);
+    const np = sp(t, T(1.85), 2.0, 0.45);
+    show($("bNotif"), np, 60, `scale(${lerp(0.94, 1, clamp(np, 0, 1.05))})`);
   }
 
   /* ---------------- C · agentes ---------------- */
   const REPLY = "Hola, María. Gracias por escribirnos. Te preparamos el presupuesto por 20 bolsas y te lo enviamos hoy.";
   const chips = [...document.querySelectorAll("#sC .chip")];
   function sceneC(t) {
-    const l = L["04-agentes"], s = l.start - PRE, k = clamp((l.dur + 0.9) / 4.9, 0.85, 1.6);
+    const ln = l("04-agentes"), s = ln.start - 0.2, k = clamp((ln.dur + 0.9) / 4.9, 0.85, 1.6);
     const T = x => s + x * k;
-    show($("cLabel"), seg(t, T(0), T(0.5), E.arrive), 20); show($("cDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
-    show($("cMsg"), seg(t, T(0), T(0.4), E.arrive), 30);
-    show($("cAgent"), sp(t, T(0.2), 1.5, 0.75), 50);
+    kin("cLabel", t, T(0)); show($("cDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
+    show($("cMsg"), sp(t, T(0), 1.8, 0.6), 50);
+    show($("cAgent"), sp(t, T(0.2), 1.6, 0.6), 80);
     const analysed = t > T(1.1);
     $("cState").querySelector("span").textContent = analysed ? "Listo" : "Analizando…";
     $("cState").querySelector("i").style.opacity = analysed ? 1 : 0.35 + 0.65 * Math.abs(Math.sin(t * 6));
-    chips.forEach((c, i) => { const p = sp(t, T(1.1 + i * 0.14), 2, 0.65); c.style.opacity = clamp(p); c.style.transform = `scale(${lerp(0.85, 1, clamp(p))})`; });
-    const n = Math.floor(REPLY.length * seg(t, T(1.5), T(3.4), x => x));
+    chips.forEach((c, i) => { const p = sp(t, T(1.1 + i * 0.12), 2.4, 0.45); c.style.opacity = clamp(p * 2); c.style.transform = `scale(${lerp(0.6, 1, p)})`; });
+    const n = Math.floor(REPLY.length * seg(t, T(1.5), T(3.3), E.lin));
     $("cTyped").textContent = REPLY.slice(0, n);
     $("cCaret").style.opacity = n < REPLY.length && t > T(1.45) ? 1 : 0;
-    const press = t > T(3.75) && t < T(3.9) ? 0.96 : 1;
-    $("cSend").style.transform = `scale(${press})`;
-    const d = seg(t, T(3.85), T(4.15), E.arrive);
+    const click = T(3.75);
+    $("cSend").style.transform = `scale(${t > click && t < click + 0.14 ? 0.96 : 1})`;
+    const d = seg(t, click + 0.1, click + 0.4, E.arrive);
     $("cDone").style.clipPath = `inset(0 ${100 - d * 100}% 0 0)`;
+    cursor("curC", t, { x: 1000, y: 1500 }, TGT.C, T(2.6), T(3.55), click, { x: 1060, y: 1400 });
   }
 
   /* ---------------- D · apps y sistemas ---------------- */
   function sceneD(t) {
-    const l = L["05-apps"], s = l.start - PRE, k = clamp((l.dur + 0.9) / 4.5, 0.85, 1.6);
+    const ln = l("05-apps"), s = ln.start - 0.2, k = clamp((ln.dur + 0.9) / 4.5, 0.85, 1.6);
     const T = x => s + x * k;
-    show($("dLabel"), seg(t, T(0), T(0.5), E.arrive), 20); show($("dDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
-    show($("dSys"), sp(t, T(0.05), 1.5, 0.75), 50);
-    show($("dPhone"), sp(t, T(0.45), 1.4, 0.72), 120);
+    kin("dLabel", t, T(0)); show($("dDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
+    show($("dSys"), sp(t, T(0.05), 1.7, 0.6), 70);
+    const ph = sp(t, T(0.4), 1.5, 0.55);
+    $("dPhone").style.opacity = clamp(ph * 2);
+    $("dPhone").style.transform = `translateY(${(1 - ph) * 260}px) rotate(${(1 - clamp(ph)) * 8}deg)`;
     const tap = T(2.0), up = seg(t, tap + 0.1, tap + 0.4, E.arrive);
     $("dBtn").style.transform = `scale(${t > tap && t < tap + 0.14 ? 0.96 : 1})`;
     $("dDone").style.clipPath = `inset(0 ${100 - up * 100}% 0 0)`;
@@ -437,79 +533,70 @@
     $("dPill").classList.toggle("new", synced > 0.5);
     $("dRow").style.background = `rgba(82,117,103,${0.14 * synced})`;
     show($("dSync"), seg(t, tap + 0.55, tap + 1.0, E.arrive), 14);
+    cursor("curD", t, { x: 1040, y: 1700 }, TGT.D, T(1.1), T(1.85), tap, { x: 1080, y: 1600 });
   }
 
   /* ---------------- E · web ---------------- */
   const NAME = "María G.", MSG = "Quiero un presupuesto para 20 bolsas.";
   function sceneE(t) {
-    const l = L["06-web"], s = l.start - PRE, k = clamp((l.dur + 0.9) / 4.3, 0.85, 1.6);
+    const ln = l("06-web"), s = ln.start - 0.2, k = clamp((ln.dur + 0.9) / 4.3, 0.85, 1.6);
     const T = x => s + x * k;
-    show($("eLabel"), seg(t, T(0), T(0.5), E.arrive), 20); show($("eDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
-    show($("eBrowser"), sp(t, T(0.05), 1.5, 0.75), 60);
-    $("eName").textContent = NAME.slice(0, Math.floor(NAME.length * seg(t, T(0.6), T(1.0), x => x)));
-    $("eMsgF").textContent = MSG.slice(0, Math.floor(MSG.length * seg(t, T(1.05), T(2.1), x => x)));
-    $("eSend").style.transform = `scale(${t > T(2.3) && t < T(2.44) ? 0.97 : 1})`;
-    const th = seg(t, T(2.45), T(2.85), E.arrive);
-    show($("eThanks"), th, 30);
-    $("eForm").style.opacity = 1 - th * 0.92;
-    const f = seg(t, T(2.75), T(3.6), E.travel);
-    $("eFly").style.top = `${lerp(1180, 250, f)}px`;
-    $("eFly").style.opacity = f > 0 ? clamp(seg(t, T(2.75), T(2.95)) * (1 - seg(t, T(3.45), T(3.7)))) : 0;
-    $("eFly").style.transform = `scale(${lerp(1, 0.9, f)})`;
-  }
-
-  /* ---------------- F · Paraguay y valores ---------------- */
-  const vals = [...document.querySelectorAll("#sF .val")];
-  function sceneF(t) {
-    const l7 = L["07-paraguay"], l8 = L["08-fe"], s = l7.start - PRE;
-    show($("fFrom"), seg(t, s, s + 0.6, E.arrive), 24);
-    show($("fPy"), seg(t, s + 0.15, s + 0.95, E.arrive), 50);
-    $("fRule").style.transform = `scaleX(${seg(t, s + 0.6, s + 1.4, E.travel)})`;
-    // each value lands as it is spoken (they close the sentence)
-    const at0 = [0.5, 0.68, 0.84].map(f => l7.start + l7.dur * f - 0.25);
-    const at1 = [0.12, 0.55, 0.85].map(f => l8.start + l8.dur * f - 0.25);
-    const swap = seg(t, l8.start - 0.3, l8.start + 0.2, E.leave);
-    vals.forEach(v => {
-      const set = +v.dataset.set, j = +v.dataset.j;
-      v.style.top = `${830 + j * 132}px`;
-      const p = set === 0 ? seg(t, at0[j], at0[j] + 0.6, E.arrive) * (1 - swap) : seg(t, at1[j], at1[j] + 0.6, E.arrive);
-      v.style.opacity = p;
-      v.style.transform = `translateX(${(1 - p) * (set === 0 && swap > 0 ? -60 : 50)}px)`;
-    });
+    kin("eLabel", t, T(0)); show($("eDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
+    show($("eBrowser"), sp(t, T(0.05), 1.6, 0.6), 90);
+    $("eName").textContent = NAME.slice(0, Math.floor(NAME.length * seg(t, T(0.6), T(1.0), E.lin)));
+    $("eMsgF").textContent = MSG.slice(0, Math.floor(MSG.length * seg(t, T(1.05), T(2.0), E.lin)));
+    const click = T(2.3);
+    $("eSend").style.transform = `scale(${t > click && t < click + 0.14 ? 0.97 : 1})`;
+    const th = sp(t, click + 0.15, 1.8, 0.6);
+    show($("eThanks"), th, 40);
+    $("eForm").style.opacity = 1 - clamp(th) * 0.92;
+    const f = seg(t, T(2.75), T(3.5), E.whip);
+    $("eFly").style.top = `${lerp(1180, 600, f)}px`; $("eFly").style.left = `${lerp(260, 640, f)}px`;
+    $("eFly").style.opacity = f > 0 ? clamp(seg(t, T(2.75), T(2.9)) * (1 - seg(t, T(3.4), T(3.6)))) : 0;
+    $("eFly").style.transform = `scale(${lerp(1, 0.7, f)})`;
+    cursor("curE", t, { x: 1040, y: 1600 }, TGT.E, T(1.4), T(2.15), click, { x: 1080, y: 1500 });
   }
 
   /* ---------------- G · firma ---------------- */
   function sceneG(t) {
-    const l9 = L["09-lema"], l10 = L["10-cierre"], s = l9.start - PRE;
-    const mk = seg(t, s, s + 1.0, E.travel);
+    const l9 = l("09-lema"), l10 = l("10-cierre"), s = l9.start - 0.1;
+    const mk = seg(t, s, s + 0.9, E.travel);
     const up = seg(t, l10.start - 0.3, l10.start + 0.6, E.travel);
     const m = $("gMark");
-    m.style.clipPath = `inset(0 ${100 - mk * 100}% 0 0)`;
+    m.style.clipPath = `inset(-5% ${100 - mk * 100}% -5% 0)`;
     m.style.transform = `translateY(${-300 * up}px) scale(${lerp(1, 0.78, up)})`;
-    const lp = seg(t, s + 0.7, s + 1.4, E.arrive);
-    $("gLema").style.opacity = lp; $("gLema").style.transform = `translateY(${(1 - lp) * 24 - 300 * up + 16 * up}px)`;
-    show($("gCta"), seg(t, l10.start, l10.start + 0.8, E.arrive), 40);
-    const cp = seg(t, l10.start + 0.7, l10.start + 1.3, E.arrive);
-    $("gContact").style.opacity = cp; $("gContact").style.transform = `translate(-50%, ${(1 - cp) * 20}px)`;
+    kin("gLema", t, s + 0.6, 1e9, 0.08);
+    $("gLema").style.transform = `translateY(${-284 * up}px)`;
+    kin("gCta", t, l10.start + 0.05, 1e9, 0.06);
+    const cp = sp(t, l10.start + 0.8, 1.8, 0.6);
+    $("gContact").style.opacity = clamp(cp); $("gContact").style.transform = `translate(-50%, ${(1 - cp) * 24}px)`;
   }
-
-  const SCENES = { sA: sceneA, sB: sceneB, sC: sceneC, sD: sceneD, sE: sceneE, sF: sceneF, sG: sceneG };
 
   /* ---------------- render ---------------- */
   const SUBS = new URLSearchParams(location.search).has("subs");
   let subsOn = SUBS;
   function render(t) {
-    for (const g of GROUPS) {
-      const on = t >= g.a - 0.001 && t < g.b + 0.001;
-      g.el.style.visibility = on ? "visible" : "hidden";
-      if (!on) continue;
-      // every scene leaves the same way: a short lift and fade into the next
-      const o = g.id === "sG" ? 0 : seg(t, g.b - OUT, g.b, E.leave);
-      g.el.style.opacity = 1 - o;
-      g.el.style.transform = `translateY(${-40 * o}px)`;
-      SCENES[g.id](t);
+    if (!TGT) targets();
+    const c = camera(t);
+    $("world").style.transform = `translate(540px, 880px) scale(${c.s}) translate(${-c.x}px, ${-c.y}px)`;
+    sceneA(t); sceneB(t); sceneC(t); sceneD(t); sceneE(t); sceneG(t);
+
+    // path segments draw as the camera travels; the head leads the move
+    let headAt = null;
+    const fadeAll = 1 - seg(t, l("09-lema").start + 0.5, l("09-lema").start + 1.2);
+    for (const sg of SEGS) {
+      const p = seg(t, sg.w[0], sg.w[1], E.whip);
+      sg.el.style.strokeDasharray = `${sg.L * p} ${sg.L * 2}`;
+      sg.el.style.opacity = p > 0 ? fadeAll : 0;
+      if (p > 0 && p < 1) headAt = sg.el.getPointAtLength(sg.L * p);
     }
-    const cue = subsOn ? CUES.find(c => t >= c.a && t < c.b) : null;
+    // over the full view, one pulse runs the whole network
+    const pulse = seg(t, ovIn[1] - 0.2, ovOut[0] + 0.2, E.travel);
+    if (!headAt && pulse > 0 && pulse < 1) headAt = pointOnNetwork(pulse);
+    const hs = headAt ? 1 / Math.max(0.35, c.s) : 0;
+    for (const [n, r] of [[head, 11], [halo, 26]]) { n.setAttribute("r", r * hs); if (headAt) { n.setAttribute("cx", headAt.x); n.setAttribute("cy", headAt.y); } }
+
+    const cue = subsOn ? CUES.find(q => t >= q.a && t < q.b) : null;
     $("capText").textContent = cue ? cue.text : "";
     $("caption").style.visibility = cue ? "visible" : "hidden";
     $("pending").textContent = TL.pending.length && !document.body.classList.contains("render") ? "Locución pendiente · tiempos estimados" : "";
@@ -546,8 +633,11 @@
   $("subsBtn").addEventListener("click", () => { subsOn = !subsOn; $("subsBtn").style.opacity = subsOn ? 1 : 0.5; render(t); });
   $("subsBtn").style.opacity = subsOn ? 1 : 0.5;
   addEventListener("keydown", e => { if (e.code === "Space") { e.preventDefault(); playBtn.click(); } });
-  window.__film = { duration: DURATION, seek: s => showT(s) };
-  document.fonts.ready.then(() => showT(t));
+  // camera speed in screen px per frame, for the renderer's adaptive motion blur
+  const motion = x => { const a = camera(x), b = camera(x + 1 / 30);
+    return Math.hypot((b.x - a.x) * a.s, (b.y - a.y) * a.s) + Math.abs(Math.log(b.s / a.s)) * 1500 + (x > 0.3 && x < 1.0 ? 3 : 0); };
+  window.__film = { duration: DURATION, seek: s => showT(s), motion };
+  document.fonts.ready.then(() => { targets(); showT(t); });
   showT(t);
   if (!RENDER) requestAnimationFrame(tick);
 })();

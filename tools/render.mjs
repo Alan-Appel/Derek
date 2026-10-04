@@ -56,13 +56,21 @@ if (mode === "stills") {
     "-c:v", "libx264", "-preset", "slow", "-crf", "15", "-pix_fmt", "yuv420p", "-movflags", "+faststart", out,
   ], { stdio: ["pipe", "inherit", "inherit"] });
   const frames = Math.round(duration * fps);
+  // Adaptive blur: a page may expose __film.motion(t) (screen px moved per frame). Still frames
+  // reuse one capture for every sub-sample, so only fast moves pay for the extra samples.
+  const hasMotion = await page.evaluate(() => typeof window.__film.motion === "function");
+  const send = async buf => { if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once("drain", r)); };
   for (let i = 0; i <= frames; i++) {
-    for (let s = 0; s < sub; s++) {
+    const moving = sub > 1 && (!hasMotion || await page.evaluate(x => window.__film.motion(x), i / fps) > 2);
+    if (!moving) {
+      await seek(i / fps);
+      const buf = await page.screenshot({ type: "jpeg", quality: 95 });
+      for (let s = 0; s < sub; s++) await send(buf);
+    } else for (let s = 0; s < sub; s++) {
       // sub-frames spread over half a frame (180° shutter), ending on the frame time
       const t = Math.min(duration, Math.max(0, (i - 0.5 * (sub - 1 - s) / Math.max(1, sub - 1)) / fps));
-      await seek(sub > 1 ? t : i / fps);
-      const buf = await page.screenshot({ type: "jpeg", quality: 95 });
-      if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once("drain", r));
+      await seek(t);
+      await send(await page.screenshot({ type: "jpeg", quality: 95 }));
     }
     if (i % fps === 0) process.stdout.write(`\r${(i / fps).toFixed(0)}s / ${duration}s`);
   }
