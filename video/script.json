@@ -1,6 +1,6 @@
 {
-  "title": "Derek — Todo empieza en un punto",
-  "note": "Guion v2. Alan = lo concreto (el problema, lo que construimos, cómo trabajamos). Adrián = el porqué (la conexión, la visión, el propósito). 'both' = los dos dicen el nombre a la vez. Voces temporales de Fish Audio hasta clonar las de los fundadores.",
+  "title": "Derek — Una sola hoja",
+  "note": "Guion v3 (concepto 'Una sola hoja'). Alan = lo concreto; Adrián = el porqué; 'both' = los dos dicen el nombre. Voces temporales de Fish Audio hasta clonar las de los fundadores.",
   "voices": {
     "alan": {
       "env": "FISH_VOICE_ID_ALAN",
@@ -20,15 +20,15 @@
     {
       "id": "01-desconexion",
       "speaker": "alan",
-      "est": 6.6,
+      "est": 7.2,
       "pause_after": 0.6,
-      "text": "Toda empresa tiene clientes, procesos, información y oportunidades. Pero casi siempre viven desconectados."
+      "text": "Toda empresa ya tiene lo que necesita: clientes, procesos, información, oportunidades. Pero casi siempre está todo mezclado."
     },
     {
       "id": "02-conexion",
       "speaker": "adrian",
-      "est": 5.6,
-      "text": "En Derek construimos la tecnología que los conecta. Para que todo funcione como un solo sistema."
+      "est": 4.9,
+      "text": "En Derek no empezamos agregando más cosas. Empezamos dándole forma a lo que ya existe."
     },
     {
       "id": "03-automatizamos",
@@ -39,14 +39,14 @@
     {
       "id": "04-sistemas",
       "speaker": "alan",
-      "est": 4.4,
-      "text": "Diseñamos sistemas y CRM que ordenan la operación y la relación con cada cliente."
+      "est": 2.8,
+      "text": "Ordenamos la operación con sistemas y CRM."
     },
     {
       "id": "05-web",
       "speaker": "alan",
-      "est": 2.4,
-      "text": "Creamos sitios web y tiendas en línea."
+      "est": 4.3,
+      "text": "Creamos sitios web y tiendas en línea, para que te encuentren y te compren."
     },
     {
       "id": "06-integraciones",
@@ -59,15 +59,15 @@
       "id": "07-vision",
       "speaker": "adrian",
       "est": 8.2,
-      "text": "Pero no queremos solo construir para otros. Buscamos problemas que todavía no tienen una buena solución. Experimentamos. Y construimos.",
+      "text": "Pero no queremos solo construir para otros. Investigamos problemas que todavía no tienen una buena solución. Probamos. Y construimos.",
       "pause_after": 1.0
     },
     {
       "id": "08-valores",
       "speaker": "alan",
-      "est": 4.6,
+      "est": 5.6,
       "pause_after": 0.8,
-      "text": "Con integridad, con disciplina y con respeto por cada persona que confía en nosotros."
+      "text": "Sin atajos. Con integridad, con disciplina y con respeto por cada persona que confía en nosotros."
     },
     {
       "id": "09-derek",

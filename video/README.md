@@ -1,16 +1,16 @@
-# Derek — “Todo empieza en un punto”
+# Derek — “Una sola hoja”
 
-Pieza principal vertical de 1080 × 1920, a 30 fps y de unos 51 s. La propuesta completa (concepto, guion, reparto,
-metáfora, storyboard, tiempos, transiciones, movimiento, plan de Fish Audio e implementación) está en
-[`docs/derek-film-v2.md`](../docs/derek-film-v2.md).
+Pieza principal vertical de 1080 × 1920, a 30 fps y de unos 52 s. El concepto audiovisual está en
+[`docs/derek-film-v3-una-sola-hoja.md`](../docs/derek-film-v3-una-sola-hoja.md).
+El plan de producción, el reparto y los pasos de Fish Audio de [`docs/derek-film-v2.md`](../docs/derek-film-v2.md) siguen vigentes.
 
 ## Estado
 
 | Parte | Estado |
 |---|---|
-| Guion v2 y reparto Alan / Adrián | Listo (`script.json`) |
-| Motor visual (canvas con cámara 3D) y escenas | Listo y revisado fotograma a fotograma |
-| Tomas de voz en Fish Audio | **11 tomas generadas con voces temporales** (`audio/takes.json`) |
+| Concepto “Una sola hoja” y guion v3 | Listo (`script.json`) |
+| Motor visual: hoja real plegable (malla 37×37 con luz) y cámara 3D | Listo y revisado fotograma a fotograma |
+| Tomas de voz en Fish Audio | **11 tomas del guion v3 con voces temporales** (`audio/takes.json`) |
 | Descarga y análisis de las tomas | **Bloqueado:** la red del entorno no permite `platform.r2.fish.audio` |
 | Voces clonadas de Alan Appel y Adrián Aguilera | **No existen.** Faltan muestras y autorización |
 | Previsualización MP4 | Sin sonido, con tiempos estimados y la marca “VOZ TEMPORAL” |
@@ -40,9 +40,9 @@ Con `audio/voiceover.wav` presente, la vista previa suena sincronizada.
 
 ## Decisiones
 
-- **Motor propio en canvas con proyección 3D**: órbita, inclinación, profundidad, niebla y paralaje. Es determinista y
-  renderiza con Playwright y FFmpeg. No se usaron Three.js ni WebGL: el render sin pantalla sería más lento y frágil, y la proyección propia alcanza.
-- **Sin cortes:** cada escena nace de un objeto de la anterior (punto → islas → red → circuito → interfaz → teléfono → ecosistema → horizonte → grilla → punto → derek).
+- **Un solo protagonista, la hoja:** bollo → alisado → diagonal → fuelle → bandeja → armario → mosaico → horizonte → hoja sola → página → derek. Sin nodos, tarjetas ni partículas.
+- **Pliegues reales:** rotaciones alrededor de líneas de pliegue sobre una malla iluminada; cada pliegue deja su marca y las marcas se acumulan.
+- **Motor propio en canvas con proyección 3D**, determinista. Renderiza con Playwright y FFmpeg.
 - **Las voces temporales** son genéricas. Se descartaron las que imitan a personas reales (futbolistas, actores de doblaje, divulgadores).
 - **No se inventan productos ni resultados:** la visión habla de buscar, experimentar y construir, y la estructura que crece es abstracta y sin nombre.
 - **La fe** está en los valores dichos (integridad, disciplina, respeto), no como argumento de venta.
@@ -54,4 +54,5 @@ Con `audio/voiceover.wav` presente, la vista previa suena sincronizada.
 |---|---|
 | Pruebas de voz y transcripción (para comprobar si la transcripción da marcas de tiempo; no las da) | 177 |
 | 11 tomas del guion v2 con voces temporales | 714 |
-| **Saldo** | **11.109 de 12.000** |
+| 6 tomas nuevas del guion v3 | 566 |
+| **Saldo** | **10.543 de 12.000** |
