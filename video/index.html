@@ -3,152 +3,48 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Derek — Presentación</title>
+<title>Derek — Todo empieza en un punto</title>
 <style>
   /*
-   * Derek — video de presentación (vertical 1080×1920).
-   * Cada fotograma es render(t). Los tiempos salen de timeline.js (tools/vo-build.mjs),
-   * que usa la duración real de cada toma de voz cuando existe.
-   * ?subs=1 incrusta subtítulos.
+   * Derek — “Todo empieza en un punto”. Vertical 1080×1920.
+   * Motor en canvas con proyección 3D real. Cada fotograma es render(t).
+   * Todos los tiempos salen de timeline.js (tools/vo-build.mjs): la voz manda.
+   * ?subs=1 incrusta subtítulos · ?final=1 oculta la marca de voz temporal.
    */
   @font-face { font-family: "Manrope"; font-weight: 200 800; font-display: block; src: url("../film/fonts/manrope-latin.woff2") format("woff2"); }
   :root {
-    --paper: #F7F7F2; --ink: #171918; --accent: #527567; --accent-soft: #E3ECE7;
-    --muted: #7D807A; --line: #E2E2DA; --card: #FFFFFF;
+    --paper: #F7F7F2; --ink: #171918; --accent: #527567;
     --page-bg: #E6E6DF; --ui: #85877f;
   }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --page-bg: #0f100f; --ui: #77786f; } }
-  :root[data-theme="dark"] { --page-bg: #0f100f; --ui: #77786f; }
-
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --page-bg: #0d0e0d; --ui: #77786f; } }
+  :root[data-theme="dark"] { --page-bg: #0d0e0d; --ui: #77786f; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body { background: var(--page-bg); font-family: "Manrope", system-ui, sans-serif; color: var(--ink);
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px; overflow: hidden; }
   #viewport { width: 100%; flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; }
-  #frame { position: relative; overflow: hidden; background: var(--paper); flex: none; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,.12); }
+  #frame { position: relative; overflow: hidden; background: var(--paper); flex: none; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,.14); }
   #stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; overflow: hidden; background: var(--paper); }
-  #world { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-origin: 0 0; will-change: transform; }
-  .frame { position: absolute; width: 1080px; height: 1920px; }
-  #paths { position: absolute; left: 0; top: 0; width: 1px; height: 1px; overflow: visible; }
-  .w { display: inline-block; overflow: hidden; vertical-align: top; padding: .08em .04em .16em; margin: -.08em -.04em -.16em; }
+  #cv { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+  .ov { position: absolute; will-change: transform, opacity; }
+  .w { display: inline-block; overflow: hidden; vertical-align: top; padding: .08em .04em .18em; margin: -.08em -.04em -.18em; }
   .wi { display: inline-block; will-change: transform; }
-  .cursor { position: absolute; left: 0; top: 0; z-index: 5; will-change: transform; }
-  .cursor svg { width: 46px; height: 46px; display: block; filter: drop-shadow(0 6px 10px rgba(23,25,24,.25)); }
-  .cursor span { position: absolute; left: 34px; top: 38px; background: var(--ink); color: var(--paper); font-size: 22px; font-weight: 700; padding: 7px 14px; border-radius: 12px 12px 12px 4px; white-space: nowrap; }
-  .ripple { position: absolute; width: 140px; height: 140px; margin: -70px 0 0 -70px; border-radius: 50%; border: 4px solid var(--accent); z-index: 4; pointer-events: none; }
-  .a { position: absolute; will-change: transform, opacity; }
 
-  /* shared pieces */
-  .label { left: 90px; top: 220px; display: flex; align-items: center; gap: 14px; font-size: 34px; font-weight: 650; letter-spacing: -0.01em; }
-  .label i { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); }
-  .demo { right: 90px; top: 232px; font-size: 22px; font-weight: 500; color: var(--muted); letter-spacing: .01em; }
-  .card { background: var(--card); border-radius: 26px; box-shadow: 0 1px 0 var(--line), 0 0 0 1.5px var(--line), 0 18px 40px rgba(23,25,24,.06); }
-  .ico { width: 64px; height: 64px; border-radius: 18px; background: var(--accent-soft); flex: none; display: grid; place-items: center; }
-  .ico svg { width: 32px; height: 32px; stroke: var(--accent); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-  .h { font-weight: 650; letter-spacing: -0.035em; line-height: 1.04; }
-  .sub { color: var(--muted); }
-  .wm { color: var(--ink); }
+  .lt { left: 90px; top: 1372px; color: var(--paper); white-space: nowrap; }
+  .lt > b { display: block; font-size: 40px; font-weight: 700; letter-spacing: -0.02em; }
+  .lt > span { display: block; font-size: 24px; font-weight: 500; letter-spacing: .04em; opacity: .62; margin-top: 4px; }
+  .lt i { position: absolute; left: -26px; top: 14px; width: 10px; height: 10px; border-radius: 50%; background: #86B39F; }
+  #lt1 { color: var(--ink); } #lt1 i { background: var(--accent); }
 
-  /* tareas */
-  .task { width: 470px; height: 128px; display: flex; align-items: center; gap: 20px; padding: 0 26px; }
-  .task b { display: block; font-size: 25px; font-weight: 650; letter-spacing: -0.01em; white-space: nowrap; }
-  .task span { display: block; font-size: 21px; color: var(--muted); margin-top: 4px; white-space: nowrap; }
-  .task .badge { position: absolute; right: -12px; top: -12px; min-width: 42px; height: 42px; border-radius: 21px; background: var(--ink); color: var(--paper); font-size: 20px; font-weight: 700; display: grid; place-items: center; padding: 0 10px; }
-  .task .ok { position: absolute; right: 26px; top: 40px; width: 46px; height: 46px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; }
-  .task .ok svg { width: 24px; height: 24px; stroke: #fff; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  #vals { left: 0; right: 0; top: 640px; text-align: center; color: var(--paper); font-size: 104px; font-weight: 650; letter-spacing: -0.045em; line-height: 1.12; }
+  #vals div { display: block; }
+  #mark { left: 160px; top: 760px; width: 760px; height: 222px; color: var(--ink); }
+  #cred { left: 0; right: 0; top: 1190px; text-align: center; font-size: 26px; font-weight: 600; letter-spacing: .06em; color: #6f726c; }
+  #tag { left: 0; right: 0; top: 1040px; text-align: center; font-size: 60px; font-weight: 600; letter-spacing: -0.03em; color: var(--ink); }
 
-  /* flows */
-  .msg { left: 90px; width: 900px; padding: 30px 32px; display: flex; gap: 22px; }
-  .avatar { width: 68px; height: 68px; border-radius: 50%; background: #D9D4C7; flex: none; display: grid; place-items: center; font-size: 28px; font-weight: 700; color: #5d5a50; }
-  .msg .who { font-size: 22px; color: var(--muted); font-weight: 600; }
-  .msg .txt { font-size: 30px; font-weight: 550; margin-top: 6px; letter-spacing: -0.01em; line-height: 1.3; }
-  .conn { width: 4px; border-radius: 2px; background: var(--line); overflow: visible; }
-  .conn .fill { position: absolute; left: 0; top: 0; width: 4px; border-radius: 2px; background: var(--accent); }
-  .conn .dot { position: absolute; left: -8px; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 7px rgba(82,117,103,.18); }
-  .step { font-size: 24px; font-weight: 600; color: var(--accent); white-space: nowrap; }
-  .tbl { left: 90px; width: 900px; padding: 30px 32px 18px; }
-  .tbl h4 { font-size: 26px; font-weight: 700; margin-bottom: 14px; }
-  .tr { display: grid; grid-template-columns: 1.2fr 1.2fr .9fr; font-size: 24px; padding: 18px 16px; border-top: 1.5px solid var(--line); border-radius: 12px; }
-  .tr.th { font-size: 19px; color: var(--muted); font-weight: 600; border-top: 0; padding-top: 4px; }
-  .pill { display: inline-block; font-size: 19px; font-weight: 650; padding: 6px 14px; border-radius: 999px; background: #EFEFE8; color: #55574f; justify-self: start; }
-  .pill.new { background: var(--accent); color: #fff; }
-  .notif { left: 90px; width: 900px; padding: 28px 32px; display: flex; gap: 22px; align-items: center; }
-  .notif b { font-size: 28px; font-weight: 700; display: block; }
-  .notif span { font-size: 23px; color: var(--muted); }
-  .notif em { margin-left: auto; font-style: normal; font-size: 20px; color: var(--muted); align-self: flex-start; }
-
-  /* agentes */
-  .agent { left: 90px; width: 900px; padding: 34px 34px 32px; }
-  .agent .top { display: flex; align-items: center; gap: 16px; font-size: 28px; font-weight: 700; }
-  .agent .state { margin-left: auto; font-size: 21px; font-weight: 600; color: var(--muted); display: flex; align-items: center; gap: 10px; }
-  .agent .state i { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
-  .chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
-  .chip { font-size: 22px; font-weight: 600; padding: 10px 18px; border-radius: 14px; background: var(--accent-soft); color: #33503f; }
-  .agent hr { border: 0; border-top: 1.5px solid var(--line); margin: 28px 0 22px; }
-  .agent .rl { font-size: 20px; color: var(--muted); font-weight: 650; text-transform: uppercase; letter-spacing: .06em; }
-  .draft { font-size: 29px; line-height: 1.42; margin-top: 12px; min-height: 166px; letter-spacing: -0.005em; }
-  .draft .caret { display: inline-block; width: 3px; height: 32px; background: var(--ink); vertical-align: -5px; margin-left: 2px; }
-  .review { display: flex; align-items: center; gap: 14px; margin-top: 18px; }
-  .review .tag { font-size: 20px; font-weight: 650; color: #8a6a2f; background: #F6EEDC; padding: 8px 14px; border-radius: 10px; }
-  .btn { height: 68px; padding: 0 30px; border-radius: 20px; font-size: 24px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; position: relative; overflow: hidden; white-space: nowrap; }
-  .btn.ghost { box-shadow: inset 0 0 0 2px var(--line); }
-  .btn.solid { background: var(--ink); color: var(--paper); }
-  .btn .done { position: absolute; inset: 0; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; }
-
-  /* apps */
-  .sys { left: 90px; top: 340px; width: 900px; height: 560px; overflow: hidden; display: flex; }
-  .sys .side { width: 190px; background: #F1F1EB; padding: 30px 22px; display: grid; align-content: start; gap: 12px; }
-  .sys .side i { display: block; height: 18px; border-radius: 9px; background: #E1E1D8; }
-  .sys .side i.on { background: var(--ink); width: 70%; }
-  .sys .main { flex: 1; padding: 30px 30px; }
-  .sys .main h4 { font-size: 27px; font-weight: 700; margin-bottom: 12px; }
-  .sys .tr { grid-template-columns: .7fr 1.3fr 1fr; font-size: 22px; padding: 16px 12px; }
-  .phone { left: 590px; top: 700px; width: 380px; height: 690px; border-radius: 58px; background: var(--ink); padding: 14px; box-shadow: 0 40px 80px rgba(23,25,24,.25); }
-  .phone .scr { width: 100%; height: 100%; border-radius: 46px; background: var(--paper); padding: 66px 28px 28px; position: relative; overflow: hidden; }
-  .phone .notch { position: absolute; left: 50%; top: 18px; width: 110px; height: 30px; border-radius: 15px; background: var(--ink); transform: translateX(-50%); }
-  .phone h5 { font-size: 30px; font-weight: 750; letter-spacing: -0.02em; }
-  .phone .meta { font-size: 19px; color: var(--muted); margin-top: 4px; }
-  .steps { margin-top: 28px; display: grid; gap: 0; }
-  .st { display: flex; gap: 16px; align-items: flex-start; font-size: 22px; font-weight: 600; color: #a3a59d; height: 74px; position: relative; }
-  .st i { width: 30px; height: 30px; border-radius: 50%; border: 3px solid #cfd0c8; flex: none; background: var(--paper); position: relative; z-index: 1; }
-  .st::before { content: ""; position: absolute; left: 13.5px; top: 30px; width: 3px; height: 44px; background: #e0e1da; }
-  .st:last-child::before { display: none; }
-  .st.on { color: var(--ink); } .st.on i { border-color: var(--accent); background: var(--accent); }
-  .phone .btn { position: absolute; left: 28px; right: 28px; bottom: 30px; height: 72px; font-size: 22px; }
-  .sync { font-size: 22px; font-weight: 650; color: var(--accent); white-space: nowrap; display: flex; gap: 10px; align-items: center; }
-  .sync i { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
-
-  /* web */
-  .browser { left: 90px; top: 340px; width: 900px; height: 1010px; overflow: hidden; }
-  .browser .bar { height: 76px; background: #F1F1EB; display: flex; align-items: center; gap: 10px; padding: 0 26px; }
-  .browser .bar i { width: 14px; height: 14px; border-radius: 50%; background: #d8d8cf; }
-  .browser .url { margin-left: 18px; flex: 1; height: 44px; border-radius: 22px; background: #fff; font-size: 20px; color: var(--muted); display: flex; align-items: center; padding: 0 20px; }
-  .site { padding: 40px 44px; }
-  .site nav { display: flex; justify-content: space-between; font-size: 22px; font-weight: 700; }
-  .site nav span { color: var(--muted); font-weight: 500; }
-  .site .hero { margin-top: 44px; height: 250px; border-radius: 22px; background: linear-gradient(135deg, #E9E6DC, #D9D4C7); padding: 36px; display: flex; flex-direction: column; justify-content: flex-end; }
-  .site .hero b { font-size: 44px; font-weight: 750; letter-spacing: -0.03em; line-height: 1.05; }
-  .site .hero span { font-size: 22px; color: #5f5d55; margin-top: 8px; }
-  .form { margin-top: 36px; display: grid; gap: 16px; }
-  .form label { font-size: 19px; font-weight: 650; color: var(--muted); }
-  .field { height: 72px; border-radius: 16px; box-shadow: inset 0 0 0 2px var(--line); font-size: 25px; display: flex; align-items: center; padding: 0 22px; }
-  .field.tall { height: 120px; align-items: flex-start; padding-top: 22px; }
-  .form .btn { height: 76px; margin-top: 6px; }
-  .thanks { position: absolute; left: 44px; right: 44px; bottom: 60px; height: 260px; border-radius: 22px; background: var(--accent-soft); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
-  .thanks b { font-size: 32px; font-weight: 750; color: #2f4a3c; }
-  .thanks span { font-size: 22px; color: #4c6658; }
-  .fly { left: 260px; width: 560px; padding: 22px 26px; display: flex; gap: 16px; align-items: center; font-size: 23px; font-weight: 650; }
-
-
-  /* firma */
-  .lema { left: 0; right: 0; text-align: center; font-size: 58px; font-weight: 600; letter-spacing: -0.03em; }
-  .cta { left: 0; right: 0; text-align: center; font-size: 66px; }
-  .contact { left: 50%; font-size: 24px; font-weight: 650; color: var(--muted); padding: 18px 30px; border-radius: 999px; border: 2px dashed #c9cac1; white-space: nowrap; }
-
-  /* subtítulos */
-  #caption { position: absolute; left: 90px; right: 90px; top: 1462px; display: flex; justify-content: center; pointer-events: none; }
-  #caption span { background: var(--ink); color: var(--paper); font-size: 40px; font-weight: 600; line-height: 1.3; padding: 14px 26px; border-radius: 18px; text-align: center; letter-spacing: -0.01em; max-width: 900px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
-  #pending { position: absolute; left: 90px; bottom: 60px; font-size: 20px; font-weight: 600; color: #a0581f; }
+  #caption { position: absolute; left: 90px; right: 90px; top: 1490px; display: flex; justify-content: center; pointer-events: none; }
+  #caption span { background: rgba(23,25,24,.92); color: var(--paper); font-size: 40px; font-weight: 600; line-height: 1.3; padding: 14px 26px; border-radius: 18px; text-align: center; letter-spacing: -0.01em; max-width: 900px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  #temp { position: absolute; right: 60px; top: 60px; font-size: 20px; font-weight: 700; letter-spacing: .08em; padding: 8px 14px; border-radius: 10px; border: 2px solid currentColor; opacity: .55; }
 
   #controls { width: 100%; max-width: 560px; display: flex; align-items: center; gap: 12px; color: var(--ui); font-size: 13px; font-variant-numeric: tabular-nums; flex: none; }
   #controls button { font: inherit; color: inherit; background: none; border: 1px solid currentColor; border-radius: 999px; height: 32px; min-width: 32px; padding: 0 10px; cursor: pointer; flex: none; }
@@ -161,149 +57,41 @@
 <script src="subs/cues.js"></script>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <symbol id="wordmark" viewBox="306 235 926 271">
-      <g fill="none" stroke="currentColor">
-        <path stroke-width="30" d="M 494 404 A 76 76 0 1 0 342 404 A 76 76 0 1 0 494 404"/>
-        <line x1="498" y1="491" x2="498" y2="250" stroke-width="31"/>
-        <mask id="e1" maskUnits="userSpaceOnUse" x="0" y="0" width="2000" height="1000"><rect width="2000" height="1000" fill="#fff"/><rect x="642" y="416" width="90" height="28" fill="#000"/></mask>
-        <path mask="url(#e1)" stroke-width="30" d="M 698 404 A 76 76 0 1 0 693.42 429.99"/>
-        <line x1="552" y1="403.5" x2="712.5" y2="403.5" stroke-width="25"/>
-        <line x1="753" y1="491" x2="753" y2="380" stroke-width="31"/>
-        <path stroke-width="31" d="M 753 420 L 753 378 A 50 50 0 0 1 803 328 L 833 328"/>
-        <mask id="e2" maskUnits="userSpaceOnUse" x="0" y="0" width="2000" height="1000"><rect width="2000" height="1000" fill="#fff"/><rect x="945.5" y="416" width="90" height="28" fill="#000"/></mask>
-        <path mask="url(#e2)" stroke-width="30" d="M 1001.5 404 A 76 76 0 1 0 996.92 429.99"/>
-        <line x1="855.5" y1="403.5" x2="1016" y2="403.5" stroke-width="25"/>
-        <line x1="1054" y1="491" x2="1054" y2="250" stroke-width="31"/>
-        <path d="M 1079 393 L 1107.5 393 L 1217 314.5 L 1168.75 314.5 L 1086.32 373.46 Q 1079 378.7 1079 387.7 Z" fill="currentColor" stroke-width="2" stroke-linejoin="round"/>
-        <path d="M 1079 401.25 L 1106 401.25 L 1216.5 491 L 1170 491 L 1085.99 422.77 Q 1079 417.1 1079 408.1 Z" fill="currentColor" stroke-width="2" stroke-linejoin="round"/>
-      </g>
-    </symbol>
-    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></symbol>
-    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
-    <symbol id="i-sheet" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/></symbol>
-    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
-    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/></symbol>
-    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
-    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
-  </defs>
-</svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="wordmark" viewBox="306 235 926 271">
+    <g fill="none" stroke="currentColor">
+      <path stroke-width="30" d="M 494 404 A 76 76 0 1 0 342 404 A 76 76 0 1 0 494 404"/>
+      <line x1="498" y1="491" x2="498" y2="250" stroke-width="31"/>
+      <mask id="e1" maskUnits="userSpaceOnUse" x="0" y="0" width="2000" height="1000"><rect width="2000" height="1000" fill="#fff"/><rect x="642" y="416" width="90" height="28" fill="#000"/></mask>
+      <path mask="url(#e1)" stroke-width="30" d="M 698 404 A 76 76 0 1 0 693.42 429.99"/>
+      <line x1="552" y1="403.5" x2="712.5" y2="403.5" stroke-width="25"/>
+      <line x1="753" y1="491" x2="753" y2="380" stroke-width="31"/>
+      <path stroke-width="31" d="M 753 420 L 753 378 A 50 50 0 0 1 803 328 L 833 328"/>
+      <mask id="e2" maskUnits="userSpaceOnUse" x="0" y="0" width="2000" height="1000"><rect width="2000" height="1000" fill="#fff"/><rect x="945.5" y="416" width="90" height="28" fill="#000"/></mask>
+      <path mask="url(#e2)" stroke-width="30" d="M 1001.5 404 A 76 76 0 1 0 996.92 429.99"/>
+      <line x1="855.5" y1="403.5" x2="1016" y2="403.5" stroke-width="25"/>
+      <line x1="1054" y1="491" x2="1054" y2="250" stroke-width="31"/>
+      <path d="M 1079 393 L 1107.5 393 L 1217 314.5 L 1168.75 314.5 L 1086.32 373.46 Q 1079 378.7 1079 387.7 Z" fill="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M 1079 401.25 L 1106 401.25 L 1216.5 491 L 1170 491 L 1085.99 422.77 Q 1079 417.1 1079 408.1 Z" fill="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    </g>
+  </symbol>
+</defs></svg>
 
 <div id="viewport"><div id="frame"><div id="stage">
-  <div id="world">
-  <svg id="paths" aria-hidden="true"></svg>
-
-  <!-- A · tareas dispersas → orden → Derek -->
-  <section class="frame" id="sA" style="left:0px;top:0px">
-    <div class="a h" id="aHead" style="left:90px;top:230px;font-size:92px">Tu empresa puede<br>trabajar mejor.</div>
-    <div class="a card task" data-i="0"><div class="ico"><svg><use href="#i-chat"/></svg></div><div><b>Consulta por WhatsApp</b><span>¿Tienen stock disponible?</span></div><div class="badge">3</div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
-    <div class="a card task" data-i="1"><div class="ico"><svg><use href="#i-mail"/></svg></div><div><b>Correo · Pedido #284</b><span>Confirmar la entrega</span></div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
-    <div class="a card task" data-i="2"><div class="ico"><svg><use href="#i-sheet"/></svg></div><div><b>ventas_final_v7.xlsx</b><span>Actualizar a mano</span></div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
-    <div class="a card task" data-i="3"><div class="ico"><svg><use href="#i-bell"/></svg></div><div><b>Recordatorio</b><span>Llamar al proveedor</span></div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
-    <div class="a card task" data-i="4"><div class="ico"><svg><use href="#i-doc"/></svg></div><div><b>Factura pendiente</b><span>Vence el viernes</span></div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
-    <div class="a card task" data-i="5"><div class="ico"><svg><use href="#i-clock"/></svg></div><div><b>Presupuesto sin responder</b><span>Hace 3 días</span></div><div class="ok"><svg><use href="#i-check"/></svg></div></div>
-    <svg class="a wm" id="aMark" style="left:200px;top:1100px;width:680px;height:199px"><use href="#wordmark"/></svg>
-    <div class="a h" id="aLine" style="left:0;right:0;top:1330px;text-align:center;font-size:46px;font-weight:600;color:var(--muted)">Software para trabajar mejor.</div>
-  </section>
-
-  <!-- B · automatizaciones -->
-  <section class="frame" id="sB" style="left:1300px;top:0px">
-    <div class="a label" id="bLabel"><i></i>Automatizaciones</div>
-    <div class="a demo" id="bDemo">Ejemplo ilustrativo</div>
-    <div class="a card msg" id="bMsg" style="top:330px"><div class="avatar">M</div><div><div class="who">María G. · WhatsApp</div><div class="txt">Hola, quiero un presupuesto para 20 bolsas de cemento.</div></div></div>
-    <div class="a conn" id="bC1" style="left:538px;top:542px;height:110px"><div class="fill"></div><div class="dot"></div></div>
-    <div class="a step" id="bS1" style="left:580px;top:578px">Se registra sola</div>
-    <div class="a card tbl" id="bTbl" style="top:664px">
-      <h4>Registro de consultas</h4>
-      <div class="tr th"><span>Cliente</span><span>Pedido</span><span>Estado</span></div>
-      <div class="tr" id="bRow"><span>María G.</span><span>20 bolsas</span><span class="pill new">Nueva</span></div>
-      <div class="tr"><span>Jorge A.</span><span>Pintura 4 L</span><span class="pill">Respondida</span></div>
-      <div class="tr"><span>Ana R.</span><span>Herramientas</span><span class="pill">Respondida</span></div>
-    </div>
-    <div class="a conn" id="bC2" style="left:538px;top:1060px;height:110px"><div class="fill"></div><div class="dot"></div></div>
-    <div class="a step" id="bS2" style="left:580px;top:1096px">Llega a la persona correcta</div>
-    <div class="a card notif" id="bNotif" style="top:1182px"><div class="ico"><svg><use href="#i-bell"/></svg></div><div><b>Laura · Ventas</b><span>Nueva consulta asignada: María G.</span></div><em>ahora</em></div>
-  </section>
-
-  <!-- C · agentes con IA -->
-  <section class="frame" id="sC" style="left:1300px;top:2000px">
-    <div class="a label" id="cLabel"><i></i>Agentes con IA</div>
-    <div class="a demo" id="cDemo">Ejemplo ilustrativo</div>
-    <div class="a card msg" id="cMsg" style="top:330px"><div class="avatar">M</div><div><div class="who">María G. · WhatsApp</div><div class="txt">Hola, quiero un presupuesto para 20 bolsas de cemento.</div></div></div>
-    <div class="a card agent" id="cAgent" style="top:580px">
-      <div class="top"><div class="ico" style="width:56px;height:56px"><svg><use href="#i-spark"/></svg></div>Agente de atención<div class="state" id="cState"><i></i><span>Analizando…</span></div></div>
-      <div class="chips"><span class="chip">Tipo: presupuesto</span><span class="chip">Producto: cemento × 20</span><span class="chip">Prioridad: alta</span></div>
-      <hr>
-      <div class="rl">Respuesta sugerida</div>
-      <div class="draft"><span id="cTyped"></span><span class="caret" id="cCaret"></span></div>
-      <div class="review"><span class="tag">Borrador · requiere revisión</span></div>
-      <div class="review" style="margin-top:22px"><span class="btn ghost">Editar</span><span class="btn solid" id="cSend" style="flex:1">Aprobar y enviar<span class="done" id="cDone"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Enviado</span></span></div>
-    </div>
-    <div class="cursor" id="curC"><svg viewBox="0 0 24 24"><path d="M3 2l7.5 19 2.6-7.9L21 10.5z" fill="#171918" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Vos</span></div><div class="ripple" id="curCR"></div>
-  </section>
-
-  <!-- D · apps y sistemas -->
-  <section class="frame" id="sD" style="left:0px;top:2000px">
-    <div class="a label" id="dLabel"><i></i>Apps y sistemas</div>
-    <div class="a demo" id="dDemo">Ejemplo ilustrativo</div>
-    <div class="a card sys" id="dSys">
-      <div class="side"><i class="on"></i><i></i><i></i><i></i><i></i></div>
-      <div class="main"><h4>Pedidos</h4>
-        <div class="tr th"><span>N.º</span><span>Cliente</span><span>Estado</span></div>
-        <div class="tr" id="dRow"><span>#284</span><span>María G.</span><span class="pill" id="dPill">Preparando</span></div>
-        <div class="tr"><span>#283</span><span>Jorge A.</span><span class="pill">En camino</span></div>
-        <div class="tr"><span>#282</span><span>Ana R.</span><span class="pill">Entregado</span></div>
-        <div class="tr"><span>#281</span><span>Luis P.</span><span class="pill">Entregado</span></div>
-      </div>
-    </div>
-    <div class="a sync" id="dSync" style="left:96px;top:930px"><i></i>Mismo pedido, en la app y en el sistema</div>
-    <div class="a phone" id="dPhone"><div class="scr"><div class="notch"></div>
-      <h5>Pedido #284</h5><div class="meta">María G. · 20 bolsas</div>
-      <div class="steps"><div class="st on"><i></i>Recibido</div><div class="st on" id="dSt2"><i></i>En preparación</div><div class="st" id="dSt3"><i></i>En camino</div><div class="st"><i></i>Entregado</div></div>
-      <span class="btn solid" id="dBtn">Marcar en camino<span class="done" id="dDone">Actualizado</span></span>
-    </div></div>
-    <div class="cursor" id="curD"><svg viewBox="0 0 24 24"><path d="M3 2l7.5 19 2.6-7.9L21 10.5z" fill="#171918" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Vos</span></div><div class="ripple" id="curDR"></div>
-  </section>
-
-  <!-- E · páginas web -->
-  <section class="frame" id="sE" style="left:0px;top:4000px">
-    <div class="a label" id="eLabel"><i></i>Páginas web</div>
-    <div class="a demo" id="eDemo">Ejemplo ilustrativo</div>
-    <div class="a card browser" id="eBrowser">
-      <div class="bar"><i></i><i></i><i></i><div class="url">www.ejemplo.com.py</div></div>
-      <div class="site">
-        <nav>Comercial Ejemplo<span>Productos · Contacto</span></nav>
-        <div class="hero"><b>Materiales para tu obra</b><span>Pedí tu presupuesto en minutos.</span></div>
-        <div class="form" id="eForm">
-          <label>Nombre</label><div class="field" id="eName"></div>
-          <label>Mensaje</label><div class="field tall" id="eMsgF"></div>
-          <span class="btn solid" id="eSend">Enviar consulta</span>
-        </div>
-      </div>
-      <div class="thanks" id="eThanks"><b>¡Gracias, María!</b><span>Te respondemos muy pronto.</span></div>
-    </div>
-        <div class="cursor" id="curE"><svg viewBox="0 0 24 24"><path d="M3 2l7.5 19 2.6-7.9L21 10.5z" fill="#171918" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Vos</span></div><div class="ripple" id="curER"></div>
-    <div class="a card fly" id="eFly"><div class="ico" style="width:52px;height:52px"><svg><use href="#i-chat"/></svg></div>Nueva consulta · al registro</div>
-  </section>
-
-  <!-- G · firma y cierre -->
-  <section class="frame" id="sG" style="left:1300px;top:4000px">
-    <svg class="a wm" id="gMark" style="left:150px;top:700px;width:780px;height:228px"><use href="#wordmark"/></svg>
-    <div class="a lema" id="gLema" style="top:968px">Tecnología con propósito.</div>
-    <div class="a h cta" id="gCta" style="top:1030px">Contanos qué querés<br>mejorar en tu empresa.</div>
-    <div class="a contact" id="gContact" style="top:1250px">Contacto · pendiente de confirmar</div>
-  </section>
-  </div>
-
+  <canvas id="cv" width="1080" height="1920"></canvas>
+  <div class="ov lt" id="lt1"><i></i><b>Alan Appel</b><span>CO-FOUNDER / CEO</span></div>
+  <div class="ov lt" id="lt2"><i></i><b>Adrián Aguilera</b><span>CO-FOUNDER / CEO</span></div>
+  <div class="ov" id="vals"><div id="v1">Integridad.</div><div id="v2">Disciplina.</div><div id="v3">Respeto.</div></div>
+  <svg class="ov" id="mark" aria-label="derek"><use href="#wordmark"/></svg>
+  <div class="ov" id="tag">Tecnología con propósito.</div>
+  <div class="ov" id="cred">Alan Appel · Adrián Aguilera</div>
   <div id="caption"><span id="capText"></span></div>
-  <div id="pending"></div>
+  <div id="temp">VOZ TEMPORAL</div>
 </div></div></div>
 <div id="controls">
   <button id="play" aria-label="Reproducir / pausar">▶</button>
   <span id="tc">0.0 s</span>
-  <input id="scrub" type="range" min="0" max="45" step="0.01" value="0" aria-label="Línea de tiempo">
+  <input id="scrub" type="range" min="0" max="50" step="0.01" value="0" aria-label="Línea de tiempo">
   <button id="subsBtn" aria-label="Subtítulos">CC</button>
 </div>
 <audio id="vo" src="audio/voiceover.wav" preload="auto"></audio>
@@ -312,301 +100,561 @@
 (() => {
   "use strict";
   const TL = window.TIMELINE, CUES = window.CUES || [];
-  const DURATION = TL.duration;
+  const DUR = TL.duration;
   const $ = id => document.getElementById(id);
-  const L = Object.fromEntries(TL.lines.map(l => [l.id, l]));
-  const NS = "http://www.w3.org/2000/svg";
+  const cv = $("cv"), ctx = cv.getContext("2d");
 
-  /* ---------------- easing ---------------- */
+  /* ============================ time from the voice ============================ */
+  const LN = Object.fromEntries(TL.lines.map(l => [l.id, l]));
+  const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const line = p => TL.lines.find(l => l.id.startsWith(p));
+  const W = (p, w) => { const l = line(p), k = l.words.find(q => norm(q.w).startsWith(norm(w))); return k ? k.t0 : l.start; };
+  const T = {
+    c: W("01", "clientes"), p: W("01", "procesos"), i: W("01", "informacion"), o: W("01", "oportunidades"),
+    des: W("01", "desconectados"), l1e: line("01").end,
+    l2: line("02").start, conecta: W("02", "conecta"), sistema: W("02", "sistema"), l2e: line("02").end,
+    l3: line("03").start, rep: W("03", "repetitivo"), l3e: line("03").end,
+    l4: line("04").start, sys: W("04", "sistemas"), crm: W("04", "crm"), rel: W("04", "relacion"), l4e: line("04").end,
+    l5: line("05").start, web: W("05", "web"), tiendas: W("05", "tiendas"), l5e: line("05").end,
+    l6: line("06").start, herr: W("06", "herramientas"), existe: W("06", "existe"), medida: W("06", "medida"), l6e: line("06").end,
+    l7: line("07").start, busc: W("07", "buscamos"), exp: W("07", "experimentamos"), cons: W("07", "construimos"), l7e: line("07").end,
+    l8: line("08").start, integ: W("08", "integridad"), disc: W("08", "disciplina"), resp: W("08", "respeto"), pers: W("08", "persona"), l8e: line("08").end,
+    l9: line("09").start, l10: line("10").start,
+  };
+
+  /* ================================= math ================================== */
   function bez(x1, y1, x2, y2) {
     const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
     return x => { if (x <= 0) return 0; if (x >= 1) return 1; let t = x;
       for (let i = 0; i < 8; i++) { const e = ((ax * t + bx) * t + cx) * t - x, d = (3 * ax * t + 2 * bx) * t + cx; if (Math.abs(e) < 1e-6 || !d) break; t -= e / d; }
       return ((ay * t + by) * t + cy) * t; };
   }
-  const E = { travel: bez(0.65, 0, 0.35, 1), arrive: bez(0.16, 1, 0.3, 1), leave: bez(0.5, 0, 0.75, 0), whip: bez(0.83, 0, 0.17, 1), lin: x => x };
+  const E = { travel: bez(0.65, 0, 0.35, 1), arrive: bez(0.16, 1, 0.3, 1), leave: bez(0.55, 0, 0.85, 0.3), whip: bez(0.8, 0, 0.18, 1), lin: x => x };
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, p) => a + (b - a) * p;
   const seg = (t, a, b, e = E.travel) => e(clamp((t - a) / (b - a)));
-  function spring(x, f = 1.6, z = 0.72) {
+  function spring(x, f = 1.6, z = 0.6) {
     if (x <= 0) return 0; const w = 2 * Math.PI * f, wd = w * Math.sqrt(1 - z * z);
     return 1 - Math.exp(-z * w * x) * (Math.cos(wd * x) + (z * w / wd) * Math.sin(wd * x));
   }
   const sp = (t, a, f, z) => spring(t - a, f, z);
-  const show = (el, p, y = 36, extra = "") => { el.style.opacity = clamp(p); el.style.transform = `translateY(${(1 - p) * y}px) ${extra}`; };
+  const rnd = i => { const s = Math.sin(i * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
+  const v3 = (x, y, z) => ({ x, y, z });
+  const L3 = (a, b, p) => v3(lerp(a.x, b.x, p), lerp(a.y, b.y, p), lerp(a.z, b.z, p));
+  const add = (a, b) => v3(a.x + b.x, a.y + b.y, a.z + b.z);
+  const mulv = (a, k) => v3(a.x * k, a.y * k, a.z * k);
+  const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const mix = (a, b, p) => { const A = hex(a), B = hex(b); return `rgb(${A.map((v, i) => Math.round(lerp(v, B[i], p))).join(",")})`; };
+  const rgba = (h, a) => { const c = hex(h); return `rgba(${c[0]},${c[1]},${c[2]},${clamp(a)})`; };
+  const PAPER = "#F7F7F2", INK = "#171918", GREEN = "#527567", GLOW = "#86B39F", PANEL = "#202321";
 
-  /* ---------------- kinetic words: each word rises through its own mask ---------------- */
-  function split(el) {
-    if (el.classList.contains("label")) {      // keep the words together as one flex item
-      const sp_ = document.createElement("span");
-      for (const n of [...el.childNodes]) if (n.nodeType === 3) sp_.appendChild(n);
-      el.appendChild(sp_); el = sp_;
-    }
-    for (const n of [...el.childNodes]) {
-      if (n.nodeType !== 3) continue;
-      const frag = document.createDocumentFragment();
-      n.textContent.split(/(\s+)/).forEach(part => {
-        if (!part) return;
-        if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
-        const w = document.createElement("span"); w.className = "w";
-        const wi = document.createElement("span"); wi.className = "wi"; wi.textContent = part;
-        w.appendChild(wi); frag.appendChild(w);
-      });
-      n.replaceWith(frag);
-    }
-    return [...el.querySelectorAll(".wi")];
-  }
-  const KIN = {};
-  for (const id of ["aHead", "aLine", "bLabel", "cLabel", "dLabel", "eLabel", "gLema", "gCta"]) KIN[id] = split($(id));
-  function kin(id, t, tin, tout = 1e9, stagger = 0.07) {
-    const ws = KIN[id];
-    ws.forEach((w, i) => {
-      const pin = sp(t, tin + i * stagger, 1.4, 0.68), pout = seg(t, tout + i * stagger * 0.5, tout + i * stagger * 0.5 + 0.4, E.leave);
-      w.style.transform = `translateY(${(1 - pin) * 130 - pout * 150}%)`;
-    });
-  }
-
-  /* ---------------- canvas layout ---------------- */
-  // Each part of the business is a 1080×1920 frame on one canvas; a single path connects them.
-  const FR = { sA: [0, 0], sB: [1300, 0], sC: [1300, 2000], sD: [0, 2000], sE: [0, 4000], sG: [1300, 4000] };
-  const C = k => ({ x: FR[k][0] + 540, y: FR[k][1] + 880 });
-  const l = id => L[id];
-  const into = id => [l(id).start - 0.75, l(id).start + 0.2];   // camera travel window into a line's frame
-  const OVERVIEW = { s: 0.305, x: 1190, y: 2930 };
-  const ovIn = [l("08-fe").start - 0.55, l("08-fe").start + 0.85];
-  const ovOut = [l("09-lema").start - 0.75, l("09-lema").start + 0.25];
-  const CAM = [
-    [0, 1, C("sA")],
-    [into("03-automatiza")[0], 1, C("sA")], [into("03-automatiza")[1], 1, C("sB"), E.whip],
-    [into("04-agentes")[0], 1, C("sB")], [into("04-agentes")[1], 1, C("sC"), E.whip],
-    [into("05-apps")[0], 1, C("sC")], [into("05-apps")[1], 1, C("sD"), E.whip],
-    [into("06-web")[0], 1, C("sD")], [into("06-web")[1], 1, C("sE"), E.whip],
-    [ovIn[0], 1, C("sE")], [ovIn[1], OVERVIEW.s, OVERVIEW, E.whip],
-    [ovOut[0], OVERVIEW.s * 1.06, OVERVIEW, E.lin], [ovOut[1], 1, C("sG"), E.whip],
-    [DURATION, 1.035, C("sG"), E.lin],
+  /* ================================ camera ================================= */
+  const PROD = v3(1150, -250, 650);           // where the new product grows (act 7)
+  const K = [
+    [0, v3(0, 0, 0), 1150, 0, 0],
+    [T.c - 0.2, v3(0, 0, 0), 1250, 0, 0, E.lin],
+    [T.o + 1.0, v3(0, 0, 0), 1650, 0.22, 0.10],
+    [T.des + 0.7, v3(0, 0, 0), 1950, 0.30, 0.12],
+    [T.l2 + 0.05, v3(0, 0, 0), 1980, 0.31, 0.12, E.lin],
+    [T.conecta + 0.7, v3(0, 0, 0), 1850, -0.28, 0.24, E.whip],
+    [T.l3 - 0.3, v3(0, 0, 0), 1800, -0.55, 0.30, E.travel],
+    [T.l3 + 0.45, v3(0, 0, 0), 1250, 0, 0, E.whip],
+    [T.sys - 0.2, v3(0, 0, 0), 1200, 0.03, 0.02, E.lin],
+    [T.sys + 0.65, v3(0, 0, 0), 1400, 0.36, 0.13, E.whip],
+    [T.l5 - 0.25, v3(0, 0, 0), 1420, 0.42, 0.15, E.lin],
+    [T.l5 + 0.5, v3(0, 0, 0), 1300, 0, 0, E.whip],
+    [T.l6 - 0.05, v3(0, 0, 0), 1300, 0.02, 0, E.lin],
+    [T.l6 + 0.95, v3(0, 0, 0), 3350, -0.30, 0.10, E.whip],
+    [T.l7 - 0.15, v3(0, 0, 0), 3550, -0.42, 0.13, E.lin],
+    [T.busc + 0.1, v3(0, 0, 0), 6200, -0.32, 0.40, E.whip],
+    [T.cons - 0.35, v3(0, 0, 0), 6600, -0.18, 0.38, E.lin],
+    [T.cons + 0.75, PROD, 2500, 0.10, 0.22, E.whip],
+    [T.l8 - 0.2, PROD, 2350, 0.18, 0.20, E.lin],
+    [T.integ + 0.1, v3(0, 0, 0), 3900, 0, 0, E.whip],
+    [T.l9 - 0.3, v3(0, 0, 0), 3700, 0, 0, E.lin],
+    [T.l9 + 0.45, v3(0, 0, 0), 1500, 0, 0, E.whip],
+    [DUR, v3(0, 0, 0), 1500, 0, 0, E.lin],
   ];
-  function camera(t) {
-    for (let i = 1; i < CAM.length; i++) {
-      const a = CAM[i - 1], b = CAM[i];
+  for (let i = 1; i < K.length; i++) K[i][0] = Math.max(K[i][0], K[i - 1][0] + 0.05);   // stay monotonic whatever the takes do
+  function camAt(t) {
+    for (let i = 1; i < K.length; i++) {
+      const a = K[i - 1], b = K[i];
       if (t <= b[0]) {
-        const p = (b[3] || E.travel)(clamp((t - a[0]) / Math.max(1e-6, b[0] - a[0])));
-        return { s: Math.exp(lerp(Math.log(a[1]), Math.log(b[1]), p)), x: lerp(a[2].x, b[2].x, p), y: lerp(a[2].y, b[2].y, p) };
+        const p = (b[5] || E.travel)(clamp((t - a[0]) / (b[0] - a[0])));
+        return { tg: L3(a[1], b[1], p), dist: Math.exp(lerp(Math.log(a[2]), Math.log(b[2]), p)), yaw: lerp(a[3], b[3], p), pitch: lerp(a[4], b[4], p) };
       }
     }
-    const k = CAM[CAM.length - 1]; return { s: k[1], x: k[2].x, y: k[2].y };
+    const k = K[K.length - 1]; return { tg: k[1], dist: k[2], yaw: k[3], pitch: k[4] };
+  }
+  const F = 1500, CX = 540, CY = 860;
+  let CAM;
+  function setCam(t) {
+    const c = camAt(t), cy = Math.cos(c.yaw), sy = Math.sin(c.yaw), cp = Math.cos(c.pitch), spp = Math.sin(c.pitch);
+    const f = v3(sy * cp, spp, cy * cp);
+    CAM = { ...c, cy, sy, cp, spp, pos: add(c.tg, mulv(f, -c.dist)) };
+  }
+  function P(p) {
+    const dx = p.x - CAM.pos.x, dy = p.y - CAM.pos.y, dz = p.z - CAM.pos.z;
+    const x1 = dx * CAM.cy - dz * CAM.sy, z1 = dx * CAM.sy + dz * CAM.cy;
+    const y2 = dy * CAM.cp - z1 * CAM.spp, z2 = dy * CAM.spp + z1 * CAM.cp;
+    if (z2 < 40) return null;
+    const s = F / z2;
+    return { x: CX + x1 * s, y: CY + y2 * s, s, z: z2, fog: clamp(1.35 - 0.38 * z2 / CAM.dist, 0.12, 1) };
   }
 
-  // the path: tasks → automation → agent → apps → web → derek
-  const SEGS = [
-    { d: "M 990 700 C 1190 700 1190 435 1390 435", w: into("03-automatiza") },
-    { d: "M 1840 1332 C 1840 1700 1840 1980 1840 2330", w: into("04-agentes") },
-    { d: "M 1390 2900 C 1190 2900 1190 2620 990 2620", w: into("05-apps") },
-    { d: "M 780 3390 C 780 3800 540 3950 540 4340", w: into("06-web") },
-    { d: "M 990 4700 C 1240 4700 1200 4814 1450 4814", w: [ovIn[0] + 0.6, ovOut[1] - 0.3] },
-  ].map(sg => {
-    const p = document.createElementNS(NS, "path");
-    p.setAttribute("d", sg.d); p.setAttribute("fill", "none"); p.setAttribute("stroke", "var(--accent)");
-    p.setAttribute("stroke-width", 6); p.setAttribute("stroke-linecap", "round");
-    $("paths").appendChild(p);
-    return { ...sg, el: p, L: p.getTotalLength() };
-  });
-  const head = document.createElementNS(NS, "circle"); head.setAttribute("r", 11); head.setAttribute("fill", "var(--accent)");
-  const halo = document.createElementNS(NS, "circle"); halo.setAttribute("r", 26); halo.setAttribute("fill", "var(--accent)"); halo.setAttribute("opacity", ".16");
-  $("paths").append(halo, head);
-  const TOTAL = SEGS.reduce((a, s) => a + s.L, 0);
-  function pointOnNetwork(f) {             // f ∈ [0,1] along the whole path
-    let d = f * TOTAL;
-    for (const s of SEGS) { if (d <= s.L) return s.el.getPointAtLength(d); d -= s.L; }
-    const s = SEGS[SEGS.length - 1]; return s.el.getPointAtLength(s.L);
+  /* ============================== drawing kit ============================== */
+  let DK = 0;                                     // 0 = paper world, 1 = graphite world
+  const inkC = () => mix(INK, PAPER, DK), accC = () => mix(GREEN, GLOW, DK);
+  function dot(p, r, color, a) { if (!p || a <= 0.003) return; ctx.globalAlpha = clamp(a * p.fog); ctx.fillStyle = color; ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(0.6, r * p.s), 0, 7); ctx.fill(); }
+  function glow(p, r, color, a) {
+    if (!p || a <= 0.003) return;
+    const R = Math.max(2, r * p.s), g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, R * 3);
+    g.addColorStop(0, rgba(PAPER, 0.95 * a)); g.addColorStop(0.25, rgba(color, 0.6 * a)); g.addColorStop(1, rgba(color, 0));
+    ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, R * 3, 0, 7); ctx.fill();
+  }
+  function seg3(a, b, w, color, al, prog = 1, dash = null) {
+    const A = P(a), B0 = P(b); if (!A || !B0 || al <= 0.003 || prog <= 0) return;
+    const B = { x: lerp(A.x, B0.x, prog), y: lerp(A.y, B0.y, prog) };
+    ctx.globalAlpha = clamp(al * Math.min(A.fog, B0.fog)); ctx.strokeStyle = color; ctx.lineWidth = Math.max(0.7, w * (A.s + B0.s) / 2);
+    ctx.setLineDash(dash || []); ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke(); ctx.setLineDash([]);
+  }
+  function curve3(pts, w, color, al, prog = 1) {          // polyline through projected points, drawn up to prog
+    const Q = pts.map(P); if (Q.some(q => !q) || al <= 0.003 || prog <= 0) return;
+    const n = Math.max(1, Math.floor((Q.length - 1) * prog));
+    ctx.globalAlpha = clamp(al * Q[0].fog); ctx.strokeStyle = color; ctx.lineWidth = Math.max(0.7, w * Q[0].s);
+    ctx.beginPath(); ctx.moveTo(Q[0].x, Q[0].y); for (let i = 1; i <= n; i++) ctx.lineTo(Q[i].x, Q[i].y); ctx.stroke();
+  }
+  function label(p3, text, a, size = 22, color = null, align = "center") {
+    const p = P(p3); if (!p || a <= 0.01) return;
+    ctx.globalAlpha = clamp(a * p.fog); ctx.fillStyle = color || inkC();
+    ctx.font = `700 ${size * clamp(p.s, 0.62, 1.3)}px Manrope`; ctx.textAlign = align; ctx.textBaseline = "middle";
+    ctx.letterSpacing = "0.14em"; ctx.fillText(text, p.x, p.y); ctx.letterSpacing = "0px";
+  }
+  // a flat plane in 3D: affine transform from plane pixels to screen (good for the mild angles we use)
+  function plane(O, yaw, fn) {
+    const U = v3(Math.cos(yaw), 0, Math.sin(yaw)), V = v3(0, 1, 0);
+    const p0 = P(O), pu = P(add(O, mulv(U, 100))), pv = P(add(O, mulv(V, 100)));
+    if (!p0 || !pu || !pv) return;
+    ctx.save(); ctx.setTransform((pu.x - p0.x) / 100, (pu.y - p0.y) / 100, (pv.x - p0.x) / 100, (pv.y - p0.y) / 100, p0.x, p0.y);
+    fn(p0); ctx.restore();
+  }
+  const rr = (x, y, w, h, r) => { ctx.beginPath(); ctx.roundRect(x - w / 2, y - h / 2, w, h, Math.min(r, w / 2, h / 2)); };
+
+  /* ============================ the node system ============================ */
+  // 48 nodes = a 4×4×3 lattice; each quadrant is one "island" (clientes, procesos, información, oportunidades)
+  const NODES = [];
+  for (let iz = 0; iz < 3; iz++) for (let iy = 0; iy < 4; iy++) for (let ix = 0; ix < 4; ix++) {
+    const n = NODES.length, q = (ix >= 2 ? 1 : 0) + (iy >= 2 ? 2 : 0);
+    NODES.push({ n, ix, iy, iz, q, lat: v3((ix - 1.5) * 200, (iy - 1.5) * 200, (iz - 1) * 200), j: v3(rnd(n) - 0.5, rnd(n + 50) - 0.5, rnd(n + 99) - 0.5) });
+  }
+  const QC = [v3(-310, -440, 0), v3(320, -330, 160), v3(-300, 370, -120), v3(320, 480, 90)];
+  const QT = [T.c, T.p, T.i, T.o];
+  const QN = ["CLIENTES", "PROCESOS", "INFORMACIÓN", "OPORTUNIDADES"];
+  const quadCenter = q => v3(((q & 1) ? 1 : -1) * 200, ((q & 2) ? 1 : -1) * 200, 0);
+  const RING = [0, 1, 2, 3, 7, 11, 15, 14, 13, 12, 8, 4].map(i => 16 + i);    // middle layer perimeter
+  const ringPos = k => v3(Math.cos(-Math.PI / 2 + k * 2 * Math.PI / 12) * 330, Math.sin(-Math.PI / 2 + k * 2 * Math.PI / 12) * 330, 0);
+  const EDGES = [];
+  for (const a of NODES) for (const b of NODES) if (b.n > a.n && Math.abs(a.ix - b.ix) + Math.abs(a.iy - b.iy) + Math.abs(a.iz - b.iz) === 1) EDGES.push([a.n, b.n, a.q === b.q]);
+
+  function nodeState(nd, t) {
+    // island
+    const spread = lerp(1, 1.28, seg(t, T.des - 0.1, T.des + 0.9));
+    const local = mulv(add(add(nd.lat, mulv(quadCenter(nd.q), -1)), mulv(nd.j, 70)), 0.5);
+    const ang = t * 0.25 + nd.q;
+    const rl = v3(local.x * Math.cos(ang) - local.z * Math.sin(ang), local.y, local.x * Math.sin(ang) + local.z * Math.cos(ang));
+    const island = add(mulv(QC[nd.q], spread), rl);
+    const em = sp(t, QT[nd.q] - 0.15 + (nd.n % 12) * 0.025, 1.3, 0.62);
+    let pos = L3(v3(0, 0, 0), island, em), r = 11 * clamp(em * 1.2), a = clamp(em * 3);
+    // one system
+    const toLat = seg(t, T.conecta + 0.15 + (nd.n % 16) * 0.03, T.sistema + 0.35, E.travel);
+    pos = L3(pos, nd.lat, toLat);
+    // automation ring: the middle perimeter becomes the loop, the rest recedes into depth
+    const k = RING.indexOf(nd.n), toLoop = seg(t, T.l3 - 0.2, T.l3 + 0.55, E.travel);
+    if (k >= 0) pos = L3(pos, ringPos(k), toLoop);
+    else { pos = L3(pos, add(nd.lat, v3(0, 0, 1500)), toLoop); a *= lerp(1, 0.22, toLoop); }
+    // everything leaves the stage when the interface takes over
+    const gone = seg(t, T.sys + 0.1, T.sys + 0.7);
+    a *= 1 - (k >= 0 ? seg(t, T.sys + 0.35, T.sys + 0.55) : gone);
+    return { pos, r: r * lerp(1, 1.25, toLoop * (k >= 0 ? 1 : 0)), a };
   }
 
-  // cursor targets, in frame coordinates (layout offsets ignore transforms)
-  function posIn(el, frame) { let x = 0, y = 0, n = el; while (n && n !== frame) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return { x, y, w: el.offsetWidth, h: el.offsetHeight }; }
-  let TGT = null;
-  function targets() {
-    const c = posIn($("cSend"), $("sC")), d = posIn($("dBtn"), $("sD")), e = posIn($("eSend"), $("sE"));
-    TGT = { C: { x: c.x + c.w * 0.45, y: c.y + c.h * 0.55 }, D: { x: d.x + d.w * 0.5, y: d.y + d.h * 0.55 }, E: { x: e.x + e.w * 0.5, y: e.y + e.h * 0.55 } };
-  }
-  function cursor(id, t, from, to, arrive0, arrive1, click, leaveTo) {
-    const c = $(id), r = $(id + "R");
-    const p = seg(t, arrive0, arrive1, E.travel), q = seg(t, click + 0.35, click + 1.1, E.travel);
-    const arc = Math.sin(p * Math.PI) * 60;
-    let x = lerp(from.x, to.x, p) + arc, y = lerp(from.y, to.y, p) - arc * 0.5;
-    x = lerp(x, leaveTo.x, q); y = lerp(y, leaveTo.y, q);
-    const press = t > click && t < click + 0.14 ? 0.86 : 1;
-    c.style.opacity = clamp(seg(t, arrive0, arrive0 + 0.2) * (1 - seg(t, click + 0.8, click + 1.1)));
-    c.style.transform = `translate(${x}px, ${y}px) scale(${press})`;
-    const rp = seg(t, click, click + 0.55, E.arrive);
-    r.style.left = `${to.x}px`; r.style.top = `${to.y}px`;
-    r.style.opacity = rp > 0 && rp < 1 ? 1 - rp : 0;
-    r.style.transform = `scale(${lerp(0.2, 1.3, rp)})`;
-  }
+  /* ============================ interface planes ============================ */
+  // module layouts in plane pixels: [x, y, w, h]
+  const DASH = [[-350, 0, 92, 540], [50, -245, 690, 46], [-170, -160, 205, 96], [50, -160, 205, 96], [270, -160, 205, 96],
+    [-60, 15, 425, 210], [270, 15, 205, 210], [50, 150, 690, 24], [50, 182, 690, 24], [50, 214, 690, 24], [50, 246, 690, 24], [50, 278, 690, 24]];
+  const CRM = [[-350, 0, 92, 540], [50, -245, 690, 46], [-160, -180, 200, 34], [65, -180, 200, 34], [290, -180, 200, 34],
+    [-160, -110, 200, 80], [-160, -15, 200, 80], [-160, 80, 200, 80], [65, -110, 200, 80], [65, -15, 200, 80], [290, -110, 200, 80], [290, -15, 200, 80]];
+  const WEB = [[0, -330, 0, 0], [0, -330, 340, 40], [0, -190, 340, 190], [-87, 20, 160, 150], [87, 20, 160, 150],
+    [-87, 190, 160, 150], [87, 190, 160, 150], [0, 320, 340, 56], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+  const FRAME = { dash: [820, 600, 22], web: [400, 820, 58] };
 
-  /* ---------------- A · tareas ---------------- */
-  const tasks = [...document.querySelectorAll("#sA .task")];
-  const MESS = [[96, 520, -6], [520, 640, 5], [70, 800, 3], [500, 960, -4], [110, 1120, 6], [470, 1280, -3]];
-  function sceneA(t) {
-    const l2 = l("02-derek");
-    kin("aHead", t, 0.15, l2.start - 0.35, 0.08);
-    const order = seg(t, l2.start - 0.15, l2.start + 1.0, E.travel);
-    tasks.forEach((c, i) => {
-      const [mx, my, mr] = MESS[i];
-      const pin = sp(t, 0.5 + i * 0.26, 1.7, 0.55);
-      const jitter = (1 - order) * Math.sin(t * 1.3 + i * 1.7) * 7;
-      const delay = i * 0.05, oi = seg(t, l2.start - 0.15 + delay, l2.start + 0.9 + delay, E.travel);
-      const x = lerp(mx, 90, oi), y = lerp(my, 300 + i * 132, oi) + jitter, r = lerp(mr, 0, oi);
-      c.style.left = `${x}px`; c.style.top = `${y}px`; c.style.width = `${lerp(470, 900, oi)}px`;
-      c.style.opacity = clamp(pin * 1.4);
-      c.style.transform = `translateY(${(1 - clamp(pin, 0, 1.2)) * 60}px) rotate(${r + (1 - clamp(pin)) * 8}deg) scale(${lerp(0.9, 1, clamp(pin, 0, 1.1))})`;
-      const ok = c.querySelector(".ok"); const okp = sp(t, l2.start + 0.85 + i * 0.08, 2.4, 0.5);
-      ok.style.opacity = clamp(okp); ok.style.transform = `scale(${Math.max(0, okp)})`;
-      const badge = c.querySelector(".badge");
-      if (badge) { badge.textContent = String(3 + Math.min(4, Math.floor(Math.max(0, t - 1.6) / 0.7))); badge.style.opacity = 1 - order;
-        badge.style.transform = `scale(${1 + 0.25 * Math.max(0, Math.sin(Math.max(0, t - 1.6) / 0.7 * Math.PI)) * (1 - order)})`; }
+  function drawInterface(t) {
+    const sysIn = seg(t, T.sys - 0.15, T.sys + 0.55, E.travel);
+    if (sysIn <= 0) return;
+    const toCrm = seg(t, T.crm - 0.05, T.crm + 0.6, E.travel), toWeb = seg(t, T.web - 0.25, T.web + 0.45, E.travel);
+    const back = seg(t, T.l6 + 0.1, T.l6 + 0.9, E.travel);               // phone steps back into the ecosystem
+    const out = (1 - seg(t, T.l8 + 0.1, T.l8 + 0.7)) * (1 - 0.75 * seg(t, T.cons - 0.4, T.cons + 0.3));
+    if (out <= 0) return;
+    const fw = lerp(FRAME.dash[0], FRAME.web[0], toWeb), fh = lerp(FRAME.dash[1], FRAME.web[1], toWeb), fr = lerp(FRAME.dash[2], FRAME.web[2], toWeb);
+    const O = v3(0, lerp(0, 40, back), 0);
+    plane(O, 0, () => {
+      ctx.globalAlpha = 0.97 * seg(t, T.sys + 0.15, T.sys + 0.55) * out;
+      ctx.fillStyle = PANEL; rr(0, 0, fw, fh, fr); ctx.fill();
+      ctx.strokeStyle = rgba(PAPER, 0.14); ctx.lineWidth = 2; ctx.stroke();
+      // modules: the ring nodes arrive and grow into rectangles
+      for (let m = 0; m < 12; m++) {
+        const k = m, arrive = seg(t, T.sys - 0.15 + k * 0.03, T.sys + 0.5 + k * 0.03, E.travel);
+        const grow = seg(t, T.sys + 0.3 + k * 0.03, T.sys + 0.75 + k * 0.03, E.arrive);
+        const rp = ringPos(k);
+        let [x, y, w, h] = DASH[m];
+        const C2 = CRM[m], W2 = WEB[m];
+        x = lerp(x, C2[0], toCrm); y = lerp(y, C2[1], toCrm); w = lerp(w, C2[2], toCrm); h = lerp(h, C2[3], toCrm);
+        x = lerp(x, W2[0], toWeb); y = lerp(y, W2[1], toWeb); w = lerp(w, W2[2], toWeb); h = lerp(h, W2[3], toWeb);
+        x = lerp(rp.x, x, arrive); y = lerp(rp.y, y, arrive);
+        w = lerp(22, w, grow); h = lerp(22, h, grow);
+        if (w < 2 || h < 2) continue;
+        const isCard = (m >= 5 && toCrm > 0.5 && toWeb < 0.5);
+        ctx.globalAlpha = out * (m === 0 && toWeb > 0.5 ? 0 : 1);
+        ctx.fillStyle = m === 0 ? "#2a2e2b" : (isCard ? "#2c312e" : "#30342f");
+        rr(x, y, w, h, lerp(11, 10, grow)); ctx.fill();
+        // content inside modules
+        ctx.globalAlpha = out * seg(t, T.sys + 0.6 + k * 0.03, T.sys + 1.0 + k * 0.03) * (1 - toWeb);
+        ctx.fillStyle = rgba(PAPER, 0.5);
+        if (m >= 2 && m <= 4 && toCrm < 0.5) { ctx.fillRect(x - w / 2 + 18, y - 22, 70, 9); ctx.fillStyle = rgba(GLOW, 0.9); ctx.fillRect(x - w / 2 + 18, y + 2, 110 + 30 * (m - 2), 18); }
+        if (m === 5 && toCrm < 0.5) for (let b = 0; b < 9; b++) {
+          const hb = (0.35 + 0.6 * rnd(b + 7)) * 150 * sp(t, T.sys + 0.75 + b * 0.05, 1.8, 0.55);
+          ctx.fillStyle = b === 7 ? GLOW : rgba(PAPER, 0.35); ctx.fillRect(x - w / 2 + 24 + b * 42, y + h / 2 - 22 - hb, 26, hb);
+        }
+        if (m >= 7 && toCrm < 0.5) { ctx.beginPath(); ctx.arc(x - w / 2 + 20, y, 6, 0, 7); ctx.fill(); ctx.fillRect(x - w / 2 + 40, y - 3, 180 + 90 * rnd(m), 6); }
+      }
+      // CRM: clients ↔ opportunities, one deal moves to "Cierre"
+      const crmA = toCrm * (1 - toWeb) * out;
+      if (crmA > 0.01) {
+        ctx.globalAlpha = crmA; ctx.fillStyle = rgba(PAPER, 0.75); ctx.font = "700 17px Manrope"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ["CONTACTO", "PROPUESTA", "CIERRE"].forEach((s, i) => ctx.fillText(s, [-160, 65, 290][i], -180));
+        const clients = ["A", "M", "J", "L", "R"];
+        clients.forEach((c, i) => {
+          const cyy = -170 + i * 80, ap = sp(t, T.crm + 0.35 + i * 0.07, 2, 0.6);
+          ctx.globalAlpha = crmA * clamp(ap); ctx.fillStyle = i === 1 ? GLOW : rgba(PAPER, 0.85);
+          ctx.beginPath(); ctx.arc(-350, cyy, 22 * clamp(ap, 0, 1.2), 0, 7); ctx.fill();
+          ctx.fillStyle = INK; ctx.font = "800 18px Manrope"; ctx.fillText(c, -350, cyy + 1);
+        });
+        // relationships: client → card
+        const links = [[0, 5], [1, 8], [2, 6], [3, 10], [4, 7], [1, 9], [3, 11]];
+        links.forEach(([ci, m], j) => {
+          const pr = seg(t, T.crm + 0.5 + j * 0.06, T.crm + 0.95 + j * 0.06), [x, y, w] = CRM[m];
+          const x0 = -326, y0 = -170 + ci * 80, x1 = x - w / 2, y1 = y;
+          ctx.globalAlpha = crmA * 0.55; ctx.strokeStyle = ci === 1 ? GLOW : rgba(PAPER, 0.5); ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(x0, y0);
+          const xm = lerp(x0, x1, pr), ym = lerp(y0, y1, pr);
+          ctx.bezierCurveTo(lerp(x0, xm, 0.5), y0, lerp(x0, xm, 0.5), ym, xm, ym); ctx.stroke();
+        });
+        // the deal for client M moves from Propuesta to Cierre and is marked
+        const mv = seg(t, T.rel, T.rel + 0.6, E.travel), ok = sp(t, T.rel + 0.5, 2.4, 0.5);
+        const dx = lerp(65, 290, mv), dy = lerp(-110, 80, mv);
+        ctx.globalAlpha = crmA; ctx.fillStyle = mix("#2c312e", GREEN, clamp(ok)); rr(dx, dy, 200, 80, 10); ctx.fill();
+        ctx.fillStyle = rgba(PAPER, 0.9); ctx.fillRect(dx - 80, dy - 14, 90, 8); ctx.fillStyle = rgba(PAPER, 0.5); ctx.fillRect(dx - 80, dy + 6, 60, 6);
+        if (ok > 0.02) { ctx.strokeStyle = PAPER; ctx.lineWidth = 4; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(dx + 50, dy); ctx.lineTo(dx + 62, dy + 11 * clamp(ok)); ctx.lineTo(dx + 62 + 20 * clamp(ok), dy - 12 * clamp(ok)); ctx.stroke(); }
+      }
+      // WEB: phone with storefront
+      const webA = toWeb * out;
+      if (webA > 0.01) {
+        ctx.globalAlpha = webA;
+        ctx.fillStyle = rgba(PAPER, 0.12); rr(0, -390, 110, 22, 11); ctx.fill();                 // notch
+        ctx.fillStyle = rgba(PAPER, 0.85); ctx.font = "800 22px Manrope"; ctx.textAlign = "left"; ctx.textBaseline = "middle";
+        ctx.fillText("tienda", -150, -330);
+        // cart with a counter that responds to "tiendas"
+        const n = t > T.tiendas + 0.35 ? 2 : t > T.tiendas ? 1 : 0, pop = sp(t, n === 2 ? T.tiendas + 0.35 : T.tiendas, 3, 0.4);
+        ctx.strokeStyle = rgba(PAPER, 0.85); ctx.lineWidth = 3; rr(140, -332, 30, 24, 5); ctx.stroke();
+        if (n) { ctx.fillStyle = GLOW; ctx.beginPath(); ctx.arc(156, -346, 13 * (n ? clamp(pop, 0, 1.3) : 0), 0, 7); ctx.fill(); ctx.fillStyle = INK; ctx.font = "800 15px Manrope"; ctx.textAlign = "center"; ctx.fillText(String(n), 156, -345); }
+        // hero text and product cards
+        ctx.fillStyle = rgba(PAPER, 0.9); ctx.fillRect(-150, -235, 200, 18); ctx.fillStyle = rgba(PAPER, 0.5); ctx.fillRect(-150, -205, 150, 10);
+        ctx.fillStyle = GLOW; rr(-100, -140, 100, 34, 17); ctx.fill();
+        [[-87, 20], [87, 20], [-87, 190], [87, 190]].forEach(([x, y], i) => {
+          const hl = i === 1 ? sp(t, T.tiendas - 0.05, 2.5, 0.5) : 0;
+          ctx.fillStyle = rgba(PAPER, 0.18 + 0.1 * (i % 2)); rr(x, y - 22, 130, 80, 10); ctx.fill();
+          ctx.fillStyle = rgba(PAPER, 0.75); ctx.fillRect(x - 62, y + 34, 80, 9); ctx.fillStyle = GLOW; ctx.fillRect(x - 62, y + 52, 46, 9);
+          if (hl > 0.01) { ctx.strokeStyle = rgba(GLOW, clamp(hl)); ctx.lineWidth = 3; rr(x, y, 164 + 6 * hl, 154 + 6 * hl, 12); ctx.stroke(); }
+        });
+        ctx.fillStyle = PAPER; ctx.globalAlpha = webA * 0.9; rr(0, 320, 340, 56, 28); ctx.fill();
+        ctx.fillStyle = INK; ctx.font = "800 20px Manrope"; ctx.textAlign = "center"; ctx.fillText("Comprar", 0, 321);
+      }
     });
-    const mk = seg(t, l2.start + 1.4, l2.start + 2.2, E.arrive);
-    $("aMark").style.opacity = mk > 0 ? 1 : 0; $("aMark").style.clipPath = `inset(-5% ${100 - mk * 100}% -5% 0)`;
-    $("aMark").style.transform = `translateY(${(1 - mk) * 20}px)`;
-    kin("aLine", t, l2.start + 1.9, 1e9, 0.06);
+    const lbl = (txt, y, a) => label(v3(0, y, 0), txt, a, 22, rgba(GLOW, 1));
+    lbl("SISTEMAS", -350, seg(t, T.sys + 0.3, T.sys + 0.7) * (1 - toCrm) * out);
+    lbl("CRM", -350, toCrm * (1 - toWeb) * out);
+    lbl("WEB · E-COMMERCE", -470, toWeb * (1 - back * 0.7) * out);
   }
 
-  /* ---------------- B · automatizaciones ---------------- */
-  function conn(el, p) {
-    const h = el.offsetHeight; el.style.opacity = p > 0 ? 1 : 0;
-    el.querySelector(".fill").style.height = `${h * p}px`;
-    el.querySelector(".dot").style.top = `${h * p - 10}px`;
-    el.querySelector(".dot").style.opacity = p > 0 && p < 1 ? 1 : 0;
-  }
-  function sceneB(t) {
-    const ln = l("03-automatiza"), s = ln.start - 0.2, k = clamp((ln.dur + 0.9) / 3.6, 0.85, 1.6);
-    const T = x => s + x * k;
-    kin("bLabel", t, T(0)); show($("bDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
-    show($("bMsg"), sp(t, T(0.05), 1.8, 0.55), 70);
-    conn($("bC1"), seg(t, T(0.55), T(1.0))); show($("bS1"), seg(t, T(0.7), T(1.1), E.arrive), 10);
-    show($("bTbl"), sp(t, T(0.8), 1.8, 0.55), 60);
-    const row = $("bRow"), rp = sp(t, T(1.05), 2.2, 0.5);
-    row.style.opacity = clamp(rp); row.style.transform = `translateX(${(1 - rp) * -60}px)`;
-    row.style.background = `rgba(82,117,103,${0.14 * (1 - seg(t, T(2.2), T(3.0)))})`;
-    conn($("bC2"), seg(t, T(1.5), T(1.95))); show($("bS2"), seg(t, T(1.65), T(2.05), E.arrive), 10);
-    const np = sp(t, T(1.85), 2.0, 0.45);
-    show($("bNotif"), np, 60, `scale(${lerp(0.94, 1, clamp(np, 0, 1.05))})`);
-  }
-
-  /* ---------------- C · agentes ---------------- */
-  const REPLY = "Hola, María. Gracias por escribirnos. Te preparamos el presupuesto por 20 bolsas y te lo enviamos hoy.";
-  const chips = [...document.querySelectorAll("#sC .chip")];
-  function sceneC(t) {
-    const ln = l("04-agentes"), s = ln.start - 0.2, k = clamp((ln.dur + 0.9) / 4.9, 0.85, 1.6);
-    const T = x => s + x * k;
-    kin("cLabel", t, T(0)); show($("cDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
-    show($("cMsg"), sp(t, T(0), 1.8, 0.6), 50);
-    show($("cAgent"), sp(t, T(0.2), 1.6, 0.6), 80);
-    const analysed = t > T(1.1);
-    $("cState").querySelector("span").textContent = analysed ? "Listo" : "Analizando…";
-    $("cState").querySelector("i").style.opacity = analysed ? 1 : 0.35 + 0.65 * Math.abs(Math.sin(t * 6));
-    chips.forEach((c, i) => { const p = sp(t, T(1.1 + i * 0.12), 2.4, 0.45); c.style.opacity = clamp(p * 2); c.style.transform = `scale(${lerp(0.6, 1, p)})`; });
-    const n = Math.floor(REPLY.length * seg(t, T(1.5), T(3.3), E.lin));
-    $("cTyped").textContent = REPLY.slice(0, n);
-    $("cCaret").style.opacity = n < REPLY.length && t > T(1.45) ? 1 : 0;
-    const click = T(3.75);
-    $("cSend").style.transform = `scale(${t > click && t < click + 0.14 ? 0.96 : 1})`;
-    const d = seg(t, click + 0.1, click + 0.4, E.arrive);
-    $("cDone").style.clipPath = `inset(0 ${100 - d * 100}% 0 0)`;
-    cursor("curC", t, { x: 1000, y: 1500 }, TGT.C, T(2.6), T(3.55), click, { x: 1060, y: 1400 });
-  }
-
-  /* ---------------- D · apps y sistemas ---------------- */
-  function sceneD(t) {
-    const ln = l("05-apps"), s = ln.start - 0.2, k = clamp((ln.dur + 0.9) / 4.5, 0.85, 1.6);
-    const T = x => s + x * k;
-    kin("dLabel", t, T(0)); show($("dDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
-    show($("dSys"), sp(t, T(0.05), 1.7, 0.6), 70);
-    const ph = sp(t, T(0.4), 1.5, 0.55);
-    $("dPhone").style.opacity = clamp(ph * 2);
-    $("dPhone").style.transform = `translateY(${(1 - ph) * 260}px) rotate(${(1 - clamp(ph)) * 8}deg)`;
-    const tap = T(2.0), up = seg(t, tap + 0.1, tap + 0.4, E.arrive);
-    $("dBtn").style.transform = `scale(${t > tap && t < tap + 0.14 ? 0.96 : 1})`;
-    $("dDone").style.clipPath = `inset(0 ${100 - up * 100}% 0 0)`;
-    $("dSt3").classList.toggle("on", up > 0.5);
-    const synced = seg(t, tap + 0.35, tap + 0.6, E.arrive);
-    $("dPill").textContent = synced > 0.5 ? "En camino" : "Preparando";
-    $("dPill").classList.toggle("new", synced > 0.5);
-    $("dRow").style.background = `rgba(82,117,103,${0.14 * synced})`;
-    show($("dSync"), seg(t, tap + 0.55, tap + 1.0, E.arrive), 14);
-    cursor("curD", t, { x: 1040, y: 1700 }, TGT.D, T(1.1), T(1.85), tap, { x: 1080, y: 1600 });
+  /* ============================ integrations & custom ============================ */
+  const TOOLS = [["PAGOS", v3(640, -520, 200)], ["CORREO", v3(660, 560, -100)], ["FACTURACIÓN", v3(-650, -470, -150)], ["MENSAJERÍA", v3(-620, 600, 150)]];
+  const DASH2 = v3(0, -1180, 380), CUSTOM = v3(0, 1180, 300);
+  function arc3(a, b, lift, n = 28) { const m = add(mulv(add(a, b), 0.5), v3(0, -lift, -lift * 0.4)); const out = []; for (let i = 0; i <= n; i++) { const u = i / n; out.push(v3((1 - u) * (1 - u) * a.x + 2 * u * (1 - u) * m.x + u * u * b.x, (1 - u) * (1 - u) * a.y + 2 * u * (1 - u) * m.y + u * u * b.y, (1 - u) * (1 - u) * a.z + 2 * u * (1 - u) * m.z + u * u * b.z)); } return out; }
+  const LINKS = [[v3(0, 40, 0), DASH2, 380], [DASH2, TOOLS[2][1], 260], [DASH2, TOOLS[3][1], 260], [v3(0, 40, 0), TOOLS[0][1], 300], [v3(0, 40, 0), TOOLS[1][1], 300], [CUSTOM, v3(0, 40, 0), 200], [CUSTOM, DASH2, 300]];
+  const LINK_PTS = LINKS.map(([a, b, l]) => arc3(a, b, l));
+  function drawEcosystem(t) {
+    const on = seg(t, T.l6 + 0.2, T.l6 + 0.9), out = (1 - seg(t, T.l8 + 0.1, T.l8 + 0.7)) * (1 - 0.75 * seg(t, T.cons - 0.4, T.cons + 0.3));
+    if (on <= 0 || out <= 0) return;
+    // the system panel returns as a second layer
+    plane(DASH2, 0.25, () => {
+      ctx.globalAlpha = on * out * 0.95; ctx.fillStyle = PANEL; rr(0, 0, 820, 600, 22); ctx.fill(); ctx.strokeStyle = rgba(PAPER, 0.14); ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = "#30342f"; for (const [x, y, w, h] of CRM) { rr(x, y, w, h, 10); ctx.fill(); }
+    });
+    TOOLS.forEach(([name, pos], i) => {
+      const ap = sp(t, T.l6 + 0.35 + i * 0.12, 1.6, 0.6) * out;
+      plane(pos, -0.2, () => {
+        ctx.globalAlpha = clamp(ap); ctx.fillStyle = PANEL; rr(0, 0, 220 * clamp(ap, 0, 1.1), 220 * clamp(ap, 0, 1.1), 40); ctx.fill();
+        ctx.strokeStyle = rgba(PAPER, 0.18); ctx.lineWidth = 2; ctx.stroke();
+        ctx.strokeStyle = rgba(PAPER, 0.85); ctx.lineWidth = 7; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.beginPath();
+        if (i === 0) { rr(0, -10, 90, 60, 10); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-45, -20); ctx.lineTo(45, -20); }
+        if (i === 1) { rr(0, -10, 96, 66, 8); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-48, -40); ctx.lineTo(0, 0); ctx.lineTo(48, -40); }
+        if (i === 2) { rr(0, -10, 70, 90, 8); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-18, -20); ctx.lineTo(18, -20); ctx.moveTo(-18, 5); ctx.lineTo(18, 5); }
+        if (i === 3) { ctx.arc(0, -12, 44, 0.5, Math.PI * 2 - 0.1); ctx.lineTo(-30, 36); }
+        ctx.stroke();
+        ctx.fillStyle = rgba(PAPER, 0.7); ctx.font = "700 20px Manrope"; ctx.textAlign = "center"; ctx.letterSpacing = "0.12em"; ctx.fillText(name, 0, 78); ctx.letterSpacing = "0px";
+      });
+    });
+    // data arcs and the pulses that keep running through them
+    LINK_PTS.forEach((pts, i) => {
+      const start = i === 5 || i === 6 ? T.medida + 0.2 : T.l6 + 0.4 + i * 0.1;
+      const pr = seg(t, start, start + 0.7, E.travel);
+      curve3(pts, 3.2, accC(), 0.85 * out, pr);
+      if (pr >= 1) for (let k = 0; k < 2; k++) {
+        const u = ((t - start) * 0.55 + k * 0.5 + i * 0.13) % 1, idx = Math.floor(u * (pts.length - 1));
+        glow(P(pts[idx]), 7, GLOW, 0.9 * out);
+      }
+    });
+    // custom software: built edge by edge, then solid
+    const s = 150, C = CUSTOM;
+    const V8 = [[-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1], [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]].map(([x, y, z]) => v3(C.x + x * s * 1.6, C.y + y * s * 0.7, C.z + z * s));
+    const E12 = [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]];
+    E12.forEach(([a, b], i) => seg3(V8[a], V8[b], 3, inkC(), out, seg(t, T.existe + i * 0.07, T.existe + 0.3 + i * 0.07)));
+    const solid = seg(t, T.medida, T.medida + 0.5, E.arrive) * out;
+    if (solid > 0) {
+      for (const f of [[4, 5, 6, 7], [0, 1, 5, 4], [0, 4, 7, 3]]) {
+        const Q = f.map(i => P(V8[i])); if (Q.some(q => !q)) continue;
+        ctx.globalAlpha = solid * 0.9; ctx.fillStyle = f[0] === 4 ? "#3a403b" : f[1] === 1 ? "#4a524c" : "#2f3430";
+        ctx.beginPath(); Q.forEach((q, i) => i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y)); ctx.closePath(); ctx.fill();
+      }
+      label(v3(C.x, C.y + s * 1.5, C.z), "A MEDIDA", solid, 34, GLOW);
+    }
+    label(v3(0, -1560, 0), "INTEGRACIONES", seg(t, T.l6 + 0.6, T.l6 + 1.1) * out * (1 - seg(t, T.l7, T.l7 + 0.5)), 34, GLOW);
   }
 
-  /* ---------------- E · web ---------------- */
-  const NAME = "María G.", MSG = "Quiero un presupuesto para 20 bolsas.";
-  function sceneE(t) {
-    const ln = l("06-web"), s = ln.start - 0.2, k = clamp((ln.dur + 0.9) / 4.3, 0.85, 1.6);
-    const T = x => s + x * k;
-    kin("eLabel", t, T(0)); show($("eDemo"), seg(t, T(0.2), T(0.7), E.arrive), 0);
-    show($("eBrowser"), sp(t, T(0.05), 1.6, 0.6), 90);
-    $("eName").textContent = NAME.slice(0, Math.floor(NAME.length * seg(t, T(0.6), T(1.0), E.lin)));
-    $("eMsgF").textContent = MSG.slice(0, Math.floor(MSG.length * seg(t, T(1.05), T(2.0), E.lin)));
-    const click = T(2.3);
-    $("eSend").style.transform = `scale(${t > click && t < click + 0.14 ? 0.97 : 1})`;
-    const th = sp(t, click + 0.15, 1.8, 0.6);
-    show($("eThanks"), th, 40);
-    $("eForm").style.opacity = 1 - clamp(th) * 0.92;
-    const f = seg(t, T(2.75), T(3.5), E.whip);
-    $("eFly").style.top = `${lerp(1180, 600, f)}px`; $("eFly").style.left = `${lerp(260, 640, f)}px`;
-    $("eFly").style.opacity = f > 0 ? clamp(seg(t, T(2.75), T(2.9)) * (1 - seg(t, T(3.4), T(3.6)))) : 0;
-    $("eFly").style.transform = `scale(${lerp(1, 0.7, f)})`;
-    cursor("curE", t, { x: 1040, y: 1600 }, TGT.E, T(1.4), T(2.15), click, { x: 1080, y: 1500 });
+  /* ============================ the horizon (vision) ============================ */
+  const FIELD = [];
+  for (let i = 0; i < 300; i++) {
+    const r = 1500 + 2400 * Math.sqrt(rnd(i * 3.3)), th = rnd(i * 7.1) * Math.PI * 2, y = (rnd(i * 1.7) - 0.5) * 1700;
+    FIELD.push({ i, p: v3(Math.cos(th) * r, y, Math.sin(th) * r), grid: v3(((i % 15) - 7) * 150, (Math.floor(i / 15) - 9.5) * 150, 0) });
+  }
+  const EXP = [37, 81, 142, 199, 260];
+  FIELD[211].p = PROD;
+  function drawHorizon(t) {
+    const on = seg(t, T.l7 + 0.2, T.busc + 0.4);
+    if (on <= 0) return;
+    const align = seg(t, T.l8 + 0.05, T.l8 + 1.0, E.travel);
+    const conv = t > T.l9 - 0.5;
+    const ringR = [0, 1].map(k => ((t - T.busc - k * 0.9) / 1.9) * 4200).filter(r => r > 0 && r < 4300);
+    // the scan ring itself
+    for (const R of ringR) {
+      const pts = []; for (let k = 0; k <= 72; k++) { const a = k / 72 * Math.PI * 2; pts.push(v3(Math.cos(a) * R, 0, Math.sin(a) * R)); }
+      curve3(pts, 14, GLOW, 0.7 * (1 - R / 4300) * (1 - align));
+    }
+    for (const f of FIELD) {
+      if (conv) continue;
+      let pos = L3(f.p, f.grid, seg(t, T.l8 + 0.05 + (f.i % 15) * 0.012, T.l8 + 1.0 + (f.i % 15) * 0.012, E.travel));
+      const rr_ = Math.hypot(f.p.x, f.p.z);
+      let lit = 0; for (const R of ringR) lit = Math.max(lit, 1 - Math.abs(R - rr_) / 450);
+      const ripple = sp(t, T.pers + Math.hypot(f.grid.x, f.grid.y) / 1400, 2.2, 0.5);
+      const a = on * (0.32 + 0.6 * clamp(lit) + 0.45 * align + 0.25 * clamp(ripple) * align);
+      dot(P(pos), lerp(17, 9, align), lit > 0.2 ? GLOW : PAPER, a);
+    }
+    // prototypes: some hold, some come apart
+    EXP.forEach((idx, k) => {
+      const c = FIELD[idx].p, g = sp(t, T.exp + k * 0.09, 1.6, 0.5) * 1.6, fail = k % 2 === 1 ? seg(t, T.exp + 0.7, T.exp + 1.1, E.leave) : 0;
+      const s = 160 * clamp(g, 0, 1.2) * (1 - fail) * (1 - align);
+      if (s < 2) return;
+      const tv = [v3(0, -1, 0), v3(-0.9, 0.6, -0.5), v3(0.9, 0.6, -0.5), v3(0, 0.6, 0.9)].map(v => add(c, mulv(v, s)));
+      [[0, 1], [0, 2], [0, 3], [1, 2], [2, 3], [3, 1]].forEach(([a, b]) => seg3(tv[a], tv[b], 8, GLOW, 0.9 * (1 - fail)));
+      if (fail > 0) for (let d = 0; d < 6; d++) dot(P(add(c, v3(Math.cos(d) * 300 * fail, Math.sin(d * 1.7) * 300 * fail, 0))), 12, GLOW, 1 - fail);
+    });
+    if (t > T.exp - 0.2) label(add(FIELD[EXP[2]].p, v3(0, -330, 0)), "EXPERIMENTOS", seg(t, T.exp, T.exp + 0.4) * (1 - seg(t, T.cons, T.cons + 0.4)), 30, GLOW);
+    // the one that grows
+    const grow = seg(t, T.cons - 0.25, T.cons + 1.0, E.arrive), fade = 1 - align;
+    if (grow > 0 && fade > 0) {
+      for (let k = 0; k < 5; k++) {
+        const y = PROD.y + 260 - k * 130 * grow, w = 520 - k * 70;
+        plane(v3(PROD.x, y, PROD.z), 0.35, () => {
+          ctx.globalAlpha = clamp(grow * 1.5 - k * 0.18) * fade; ctx.fillStyle = k === 4 ? GREEN : PANEL;
+          rr(0, 0, w, 90, 16); ctx.fill(); ctx.strokeStyle = rgba(GLOW, 0.6); ctx.lineWidth = 3; ctx.stroke();
+        });
+      }
+      label(add(PROD, v3(0, -560, 0)), "CONSTRUCCIÓN", clamp(grow * 2) * fade * (1 - seg(t, T.l8 - 0.2, T.l8 + 0.2)), 30, GLOW);
+    }
+    // grid lines when everything aligns
+    if (align > 0 && !conv) {
+      for (let c = 0; c < 15; c++) seg3(v3((c - 7) * 150, -1500, 0), v3((c - 7) * 150, 1500, 0), 1.2, PAPER, 0.12 * align, seg(t, T.l8 + 0.4 + c * 0.03, T.l8 + 1.4 + c * 0.03));
+      for (let r = 0; r < 20; r++) seg3(v3(-1100, (r - 9.5) * 150, 0), v3(1100, (r - 9.5) * 150, 0), 1.2, PAPER, 0.12 * align, seg(t, T.l8 + 0.5 + r * 0.02, T.l8 + 1.5 + r * 0.02));
+    }
   }
 
-  /* ---------------- G · firma ---------------- */
-  function sceneG(t) {
-    const l9 = l("09-lema"), l10 = l("10-cierre"), s = l9.start - 0.1;
-    const mk = seg(t, s, s + 0.9, E.travel);
-    const up = seg(t, l10.start - 0.3, l10.start + 0.6, E.travel);
-    const m = $("gMark");
-    m.style.clipPath = `inset(-5% ${100 - mk * 100}% -5% 0)`;
-    m.style.transform = `translateY(${-300 * up}px) scale(${lerp(1, 0.78, up)})`;
-    kin("gLema", t, s + 0.6, 1e9, 0.08);
-    $("gLema").style.transform = `translateY(${-284 * up}px)`;
-    kin("gCta", t, l10.start + 0.05, 1e9, 0.06);
-    const cp = sp(t, l10.start + 0.8, 1.8, 0.6);
-    $("gContact").style.opacity = clamp(cp); $("gContact").style.transform = `translate(-50%, ${(1 - cp) * 24}px)`;
+  /* ============================ convergence ============================ */
+  function drawConvergence(t) {
+    const a0 = T.l9 - 0.5;
+    if (t < a0 || t > T.l9 + 0.7) return;
+    for (const f of FIELD) {
+      const d = Math.hypot(f.grid.x, f.grid.y), st = a0 + (1 - d / 1800) * 0.25;
+      const p = seg(t, st, st + 0.55, E.in || E.leave), pp = seg(t - 0.06, st, st + 0.55, E.leave);
+      const A = P(L3(f.grid, v3(0, 0, 0), seg(t, st, st + 0.55, E.leave))), B = P(L3(f.grid, v3(0, 0, 0), pp));
+      if (!A || !B || p >= 1) continue;
+      ctx.globalAlpha = 0.85; ctx.strokeStyle = p > 0.3 ? GLOW : PAPER; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(B.x, B.y); ctx.lineTo(A.x, A.y); ctx.stroke();
+      dot(A, 8, PAPER, 1);
+    }
   }
 
-  /* ---------------- render ---------------- */
+  /* ================================ dust ================================ */
+  const DUST = Array.from({ length: 140 }, (_, i) => v3((rnd(i) - 0.5) * 9000, (rnd(i + 3) - 0.5) * 7000, (rnd(i + 7) - 0.5) * 9000));
+  function drawDust(t, a) {
+    if (a <= 0) return;
+    DUST.forEach((d, i) => dot(P(v3(d.x + Math.sin(t * 0.2 + i) * 40, d.y - t * 12, d.z)), 3, PAPER, a * 0.35 * (0.4 + 0.6 * rnd(i + 11))));
+  }
+
+  /* ============================ kinetic DOM text ============================ */
+  function split(el) {
+    const walk = node => { for (const n of [...node.childNodes]) {
+      if (n.nodeType === 3) { const fr = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(s => { if (!s) return; if (/^\s+$/.test(s)) { fr.appendChild(document.createTextNode(s)); return; }
+          const w = document.createElement("span"); w.className = "w"; const wi = document.createElement("span"); wi.className = "wi"; wi.textContent = s; w.appendChild(wi); fr.appendChild(w); });
+        n.replaceWith(fr); } else if (n.nodeType === 1) walk(n); } };
+    walk(el); return [...el.querySelectorAll(".wi")];
+  }
+  const KW = { cred: split($("cred")), lt1: split($("lt1")), lt2: split($("lt2")), v1: split($("v1")), v2: split($("v2")), v3: split($("v3")), tag: split($("tag")) };
+  function kin(id, t, tin, tout = 1e9, st = 0.06) {
+    KW[id].forEach((w, i) => {
+      const a = sp(t, tin + i * st, 1.4, 0.7), b = seg(t, tout + i * st * 0.5, tout + 0.4 + i * st * 0.5, E.leave);
+      w.style.transform = `translateY(${(1 - a) * 130 - b * 150}%)`;
+    });
+  }
+
+  /* ================================ render ================================ */
   const SUBS = new URLSearchParams(location.search).has("subs");
   let subsOn = SUBS;
   function render(t) {
-    if (!TGT) targets();
-    const c = camera(t);
-    $("world").style.transform = `translate(540px, 880px) scale(${c.s}) translate(${-c.x}px, ${-c.y}px)`;
-    sceneA(t); sceneB(t); sceneC(t); sceneD(t); sceneE(t); sceneG(t);
-
-    // path segments draw as the camera travels; the head leads the move
-    let headAt = null;
-    const fadeAll = 1 - seg(t, l("09-lema").start + 0.5, l("09-lema").start + 1.2);
-    for (const sg of SEGS) {
-      const p = seg(t, sg.w[0], sg.w[1], E.whip);
-      sg.el.style.strokeDasharray = `${sg.L * p} ${sg.L * 2}`;
-      sg.el.style.opacity = p > 0 ? fadeAll : 0;
-      if (p > 0 && p < 1) headAt = sg.el.getPointAtLength(sg.L * p);
+    setCam(t);
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
+    // background: paper → graphite from the point at "conecta", graphite → paper at "Derek"
+    const o = P(v3(0, 0, 0)) || { x: CX, y: CY };
+    const wipeIn = seg(t, T.conecta - 0.15, T.conecta + 0.75, E.travel), wipeOut = seg(t, T.l9 + 0.2, T.l9 + 0.85, E.travel);
+    DK = clamp(wipeIn * 1.4) * (1 - clamp(wipeOut * 1.4));
+    ctx.fillStyle = PAPER; ctx.fillRect(0, 0, 1080, 1920);
+    if (wipeIn > 0 && wipeOut < 1) {
+      ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(o.x, o.y, 2400 * wipeIn, 0, 7); ctx.fill();
+      if (wipeOut > 0) { ctx.fillStyle = PAPER; ctx.beginPath(); ctx.arc(CX, CY, 2400 * wipeOut, 0, 7); ctx.fill(); }
     }
-    // over the full view, one pulse runs the whole network
-    const pulse = seg(t, ovIn[1] - 0.2, ovOut[0] + 0.2, E.travel);
-    if (!headAt && pulse > 0 && pulse < 1) headAt = pointOnNetwork(pulse);
-    const hs = headAt ? 1 / Math.max(0.35, c.s) : 0;
-    for (const [n, r] of [[head, 11], [halo, 26]]) { n.setAttribute("r", r * hs); if (headAt) { n.setAttribute("cx", headAt.x); n.setAttribute("cy", headAt.y); } }
+    const dark = DK > 0.5 && wipeOut < 0.5;
+    drawDust(t, dark ? seg(t, T.conecta, T.conecta + 1) * (1 - seg(t, T.l9 - 0.3, T.l9)) : 0);
+
+    // the point (the idea) — present at the start, the centre of the network, and the end
+    const pointA = seg(t, 0.25, 0.9, E.arrive);
+    const breathe = 1 + 0.08 * Math.sin(t * 3.2) * (1 - seg(t, T.c, T.c + 0.4));
+    if (t < T.l3) dot(P(v3(0, 0, 0)), 14 * pointA * breathe, inkC(), 1);
+
+    // islands → network → loop
+    const NS = NODES.map(nd => nodeState(nd, t));
+    // failed attempts to connect the islands ("desconectados")
+    for (let k = 0; k < 4; k++) {
+      const a = QC[k], b = QC[(k + 1) % 4], st = T.des - 0.35 + k * 0.12;
+      const pr = seg(t, st, st + 0.45) - seg(t, st + 0.55, st + 0.9);
+      const sp_ = lerp(1, 1.28, seg(t, T.des - 0.1, T.des + 0.9));
+      if (pr > 0 && t < T.conecta) seg3(mulv(a, sp_), L3(mulv(a, sp_), mulv(b, sp_), 0.42), 2.2, INK, 0.55, pr, [10, 12]);
+    }
+    // threads from the point to each island at "conecta"
+    for (let q = 0; q < 4; q++) {
+      const pr = seg(t, T.conecta - 0.05 + q * 0.06, T.conecta + 0.45 + q * 0.06), gone = seg(t, T.sistema, T.sistema + 0.5);
+      const sp_ = 1.28;
+      if (pr > 0 && gone < 1) seg3(v3(0, 0, 0), L3(mulv(QC[q], sp_), quadCenter(q), seg(t, T.conecta + 0.15, T.sistema + 0.35)), 3, accC(), 0.9 * (1 - gone), pr);
+    }
+    // edges: within each island first, across islands once connected
+    const cross = seg(t, T.conecta + 0.2, T.sistema + 0.2), loopOn = seg(t, T.l3 - 0.2, T.l3 + 0.4);
+    for (const [a, b, same] of EDGES) {
+      const A = NS[a], B = NS[b];
+      const al = Math.min(A.a, B.a) * (same ? 0.55 : 0.5 * cross) * (1 - loopOn * 0.75);
+      if (al > 0.01) seg3(A.pos, B.pos, 2.1, inkC(), al);
+    }
+    // the automation loop
+    const loopA = loopOn * (1 - seg(t, T.sys + 0.3, T.sys + 0.6));
+    if (loopA > 0) {
+      for (let k = 0; k < 12; k++) seg3(NS[RING[k]].pos, NS[RING[(k + 1) % 12]].pos, 3, accC(), loopA * 0.9);
+      label(v3(0, 0, 0), "AUTOMATIZACIÓN", loopA * seg(t, T.l3 + 0.2, T.l3 + 0.6), 26, GLOW);
+    }
+    for (let i = 0; i < NODES.length; i++) {
+      const s = NS[i]; if (s.a <= 0.01) continue;
+      const k = RING.indexOf(i);
+      let flash = 0;
+      if (k >= 0 && loopA > 0) for (let j = 0; j < 3; j++) {
+        const ang = ((t - T.l3) * 2.6 + j * 2 * Math.PI / 3) % (2 * Math.PI), d = Math.abs(((ang - k * 2 * Math.PI / 12) + 3 * Math.PI) % (2 * Math.PI) - Math.PI);
+        flash = Math.max(flash, 1 - d / 0.5);
+      }
+      dot(P(s.pos), s.r, flash > 0 ? mix(PAPER, GLOW, clamp(flash)) : inkC(), s.a);
+      if (flash > 0) glow(P(s.pos), 12, GLOW, clamp(flash) * loopA);
+    }
+    if (loopA > 0 && t > T.l3) for (let j = 0; j < 3; j++) {                  // tokens running the loop
+      const ang = -Math.PI / 2 + (t - T.l3) * 2.6 + j * 2 * Math.PI / 3;
+      glow(P(v3(Math.cos(ang) * 330, Math.sin(ang) * 330, 0)), 9, GLOW, loopA);
+    }
+    // island labels, spoken one by one
+    for (let q = 0; q < 4; q++) {
+      const a = seg(t, QT[q], QT[q] + 0.35, E.arrive) * (1 - seg(t, T.conecta, T.conecta + 0.4));
+      const sp_ = lerp(1, 1.28, seg(t, T.des - 0.1, T.des + 0.9));
+      label(add(mulv(QC[q], sp_), v3(0, -170, 0)), QN[q], a, 30, INK);
+    }
+
+    drawInterface(t);
+    drawEcosystem(t);
+    drawHorizon(t);
+    drawConvergence(t);
+
+    // the point returns, stretches into a line and opens into the word
+    const ret = seg(t, T.l9 + 0.15, T.l9 + 0.45, E.arrive);
+    const mark = $("mark"), mtop = 760, mh = 222, cross_ = mtop + mh * 0.622;
+    if (t > T.l9 - 0.1) {
+      const stretch = seg(t, T.l9 + 0.6, T.l9 + 1.05, E.travel), open = seg(t, T.l9 + 0.95, T.l9 + 1.5, E.arrive);
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1 - open;
+      ctx.fillStyle = DK > 0.5 ? PAPER : INK;
+      const w = lerp(18 * ret, 760, stretch), h = lerp(18 * ret, 8, stretch), y = lerp(CY, cross_, stretch);
+      if (w > 1) { rr(CX, y, w, h, h / 2); ctx.fill(); }
+      mark.style.opacity = open > 0 ? 1 : 0;
+      const top = (cross_ - mtop) / mh * 100 * (1 - open), bot = (mtop + mh - cross_) / mh * 100 * (1 - open);
+      mark.style.clipPath = `inset(${top}% 0 ${bot}% 0)`;
+    } else mark.style.opacity = 0;
+    kin("tag", t, T.l10 - 0.05, 1e9, 0.09);
+    kin("cred", t, line("10").end + 0.35, 1e9, 0.08);
+    const push = 1 + 0.035 * seg(t, T.l9 + 1.0, DUR, E.lin);
+    for (const id of ["mark", "tag", "cred"]) $(id).style.transform = `scale(${push})`;
+    $("mark").style.transformOrigin = "50% 160%"; $("tag").style.transformOrigin = "50% -60%"; $("cred").style.transformOrigin = "50% -400%";
+
+    // founders, named the first time each one speaks
+    const l1 = line("01"), l2 = line("02");
+    $("lt1").style.opacity = t > l1.start + 0.2 && t < l1.start + 4.2 ? 1 : 0; kin("lt1", t, l1.start + 0.3, l1.start + 3.6, 0.05);
+    $("lt2").style.opacity = t > l2.start + 0.15 && t < l2.start + 3.9 ? 1 : 0; kin("lt2", t, l2.start + 0.25, l2.start + 3.3, 0.05);
+    $("lt1").querySelector("i").style.transform = `scale(${clamp(sp(t, l1.start + 0.3, 2, 0.6)) * (1 - seg(t, l1.start + 3.6, l1.start + 3.9))})`;
+    $("lt2").querySelector("i").style.transform = `scale(${clamp(sp(t, l2.start + 0.25, 2, 0.6)) * (1 - seg(t, l2.start + 3.3, l2.start + 3.6))})`;
+    // values, as they are said
+    kin("v1", t, T.integ + 0.12, T.l9 - 0.6); kin("v2", t, T.disc - 0.05, T.l9 - 0.55); kin("v3", t, T.resp - 0.05, T.l9 - 0.5);
 
     const cue = subsOn ? CUES.find(q => t >= q.a && t < q.b) : null;
     $("capText").textContent = cue ? cue.text : "";
     $("caption").style.visibility = cue ? "visible" : "hidden";
-    $("pending").textContent = TL.pending.length && !document.body.classList.contains("render") ? "Locución pendiente · tiempos estimados" : "";
+    $("temp").style.color = DK > 0.5 ? PAPER : INK;
   }
 
-  /* ---------------- player ---------------- */
+  /* ================================ player ================================ */
   const stage = $("stage"), frame = $("frame"), viewport = $("viewport"), scrub = $("scrub"), tc = $("tc"), playBtn = $("play"), vo = $("vo");
   const params = new URLSearchParams(location.search), RENDER = params.has("render");
   if (RENDER) document.body.classList.add("render");
-  scrub.max = DURATION;
+  if (params.has("final")) $("temp").style.display = "none";
+  scrub.max = DUR;
   let hasAudio = !TL.pending.length;
   vo.addEventListener("error", () => { hasAudio = false; });
   function fit() {
@@ -615,29 +663,29 @@
   }
   addEventListener("resize", fit); fit();
   let t = Number(params.get("t")) || 0, playing = false, last = null;
-  function showT(time) { t = clamp(time, 0, DURATION); render(t); scrub.value = t; tc.textContent = `${t.toFixed(1)} s`; }
+  function showT(x) { t = clamp(x, 0, DUR); render(t); scrub.value = t; tc.textContent = `${t.toFixed(1)} s`; }
   function tick(now) {
     if (playing) {
-      if (hasAudio && !vo.paused) showT(vo.currentTime);
-      else if (last != null) showT(t + (now - last) / 1000);
-      if (t >= DURATION) { playing = false; playBtn.textContent = "▶"; vo.pause(); }
+      if (hasAudio && !vo.paused) showT(vo.currentTime); else if (last != null) showT(t + (now - last) / 1000);
+      if (t >= DUR) { playing = false; playBtn.textContent = "▶"; vo.pause(); }
     }
     last = now; requestAnimationFrame(tick);
   }
-  function setPlaying(p) {
-    playing = p; playBtn.textContent = p ? "❚❚" : "▶";
-    if (hasAudio) { if (p) { vo.currentTime = t; vo.play().catch(() => { hasAudio = false; }); } else vo.pause(); }
-  }
-  playBtn.addEventListener("click", () => { if (t >= DURATION) t = 0; setPlaying(!playing); });
+  function setPlaying(p) { playing = p; playBtn.textContent = p ? "❚❚" : "▶"; if (hasAudio) { if (p) { vo.currentTime = t; vo.play().catch(() => { hasAudio = false; }); } else vo.pause(); } }
+  playBtn.addEventListener("click", () => { if (t >= DUR) t = 0; setPlaying(!playing); });
   scrub.addEventListener("input", () => { setPlaying(false); showT(Number(scrub.value)); });
   $("subsBtn").addEventListener("click", () => { subsOn = !subsOn; $("subsBtn").style.opacity = subsOn ? 1 : 0.5; render(t); });
   $("subsBtn").style.opacity = subsOn ? 1 : 0.5;
   addEventListener("keydown", e => { if (e.code === "Space") { e.preventDefault(); playBtn.click(); } });
-  // camera speed in screen px per frame, for the renderer's adaptive motion blur
-  const motion = x => { const a = camera(x), b = camera(x + 1 / 30);
-    return Math.hypot((b.x - a.x) * a.s, (b.y - a.y) * a.s) + Math.abs(Math.log(b.s / a.s)) * 1500 + (x > 0.3 && x < 1.0 ? 3 : 0); };
-  window.__film = { duration: DURATION, seek: s => showT(s), motion };
-  document.fonts.ready.then(() => { targets(); showT(t); });
+  // screen-space speed of the camera (px/frame) for the renderer's adaptive motion blur
+  const REF = [v3(0, 0, 0), v3(600, 0, 0), v3(0, 600, 0), PROD];
+  const motion = x => {
+    setCam(x); const a = REF.map(P); setCam(x + 1 / 30); const b = REF.map(P); setCam(t);
+    let m = 0; a.forEach((p, i) => { if (p && b[i]) m = Math.max(m, Math.hypot(p.x - b[i].x, p.y - b[i].y)); });
+    return m + (x > T.l9 - 0.5 && x < T.l9 + 0.6 ? 20 : 0);
+  };
+  window.__film = { duration: DUR, seek: s => showT(s), motion };
+  document.fonts.ready.then(() => showT(t));
   showT(t);
   if (!RENDER) requestAnimationFrame(tick);
 })();

@@ -7,6 +7,8 @@
     "video": "node tools/render.mjs video out/derek-punto-de-convergencia.mp4 30",
     "reel:stills": "node tools/render.mjs stills out/reel --page showreel/magicpath/index.html 0.6 1.2 2.3 3.2 3.78 4.3 5.2 6.2 7.0 7.6 8.6 9.1 10.4 11.0 11.8 12.5 13.2 14.9",
     "reel": "node tools/render.mjs video out/magicpath-spec-spot.mp4 60 --page showreel/magicpath/index.html --sub 3",
-    "logo": "node tools/export-logo.mjs"
+    "logo": "node tools/export-logo.mjs",
+    "derek:audio": "node tools/vo-fetch.mjs && node tools/vo-build.mjs",
+    "derek:final": "node tools/render.mjs video out/derek-final.mp4 30 --page video/index.html --size 1080x1920 --sub 8 --audio video/audio/voiceover.wav && node tools/render.mjs video out/derek-final-subtitulos.mp4 30 --page video/index.html --size 1080x1920 --sub 8 --query subs=1 --audio video/audio/voiceover.wav"
   }
 }

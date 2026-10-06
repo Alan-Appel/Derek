@@ -1,0 +1,16 @@
+{
+  "note": "Tomas generadas con Fish Audio el 2026-10-06 con voces TEMPORALES (no son Alan ni Adrián). Descargar con: node tools/vo-fetch.mjs",
+  "takes": [
+    { "line": "01-desconexion",   "speaker": "alan",   "file": "01-desconexion.mp3",     "url": "https://platform.r2.fish.audio/tasks/2026-10-06/35d1cc1b77834c5cb00e88ea777e9514.mp3", "credits": 107 },
+    { "line": "02-conexion",      "speaker": "adrian", "file": "02-conexion.mp3",        "url": "https://platform.r2.fish.audio/tasks/2026-10-06/e09dfaed5f834e0984e5fc1b758c982a.mp3", "credits": 97 },
+    { "line": "03-automatizamos", "speaker": "alan",   "file": "03-automatizamos.mp3",   "url": "https://platform.r2.fish.audio/tasks/2026-10-06/258b9eebeadf4bbbbf91d0b57a941482.mp3", "credits": 28 },
+    { "line": "04-sistemas",      "speaker": "alan",   "file": "04-sistemas.mp3",        "url": "https://platform.r2.fish.audio/tasks/2026-10-06/33926b4e2d744141a5f41493d9196419.mp3", "credits": 84 },
+    { "line": "05-web",           "speaker": "alan",   "file": "05-web.mp3",             "url": "https://platform.r2.fish.audio/tasks/2026-10-06/548ad1f71750444cb61e56cf14aa7292.mp3", "credits": 39 },
+    { "line": "06-integraciones", "speaker": "alan",   "file": "06-integraciones.mp3",   "url": "https://platform.r2.fish.audio/tasks/2026-10-06/69b2726ceab44ab2aae075a8274f2569.mp3", "credits": 97 },
+    { "line": "07-vision",        "speaker": "adrian", "file": "07-vision.mp3",          "url": "https://platform.r2.fish.audio/tasks/2026-10-06/06827e544213400c92aec7d9c2835b3c.mp3", "credits": 137 },
+    { "line": "08-valores",       "speaker": "alan",   "file": "08-valores.mp3",         "url": "https://platform.r2.fish.audio/tasks/2026-10-06/020188a496034957b1822ccc7d7b46c4.mp3", "credits": 86 },
+    { "line": "09-derek",         "speaker": "alan",   "file": "09-derek.alan.mp3",      "url": "https://platform.r2.fish.audio/tasks/2026-10-06/1bacbdc11c1144da8c8dd298876b7b20.mp3", "credits": 6 },
+    { "line": "09-derek",         "speaker": "adrian", "file": "09-derek.adrian.mp3",    "url": "https://platform.r2.fish.audio/tasks/2026-10-06/9f2ccd8394c94259824d0f0e1b50e41d.mp3", "credits": 6 },
+    { "line": "10-lema",          "speaker": "adrian", "file": "10-lema.mp3",            "url": "https://platform.r2.fish.audio/tasks/2026-10-06/34e786aaa9814cbe959a9c70a2a9709b.mp3", "credits": 27 }
+  ]
+}

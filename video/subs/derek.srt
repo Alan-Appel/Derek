@@ -1,39 +1,71 @@
 1
-00:00:00,800 --> 00:00:03,320
-Tu empresa tiene ideas para crecer.
+00:00:01,200 --> 00:00:05,428
+Toda empresa tiene clientes, procesos, información y oportunidades.
 
 2
-00:00:03,320 --> 00:00:06,200
-Pero también tareas que consumen tiempo.
+00:00:05,776 --> 00:00:07,950
+Pero casi siempre viven desconectados.
 
 3
-00:00:06,750 --> 00:00:10,950
-En Derek desarrollamos software para ayudarte a trabajar mejor.
+00:00:08,400 --> 00:00:11,095
+En Derek construimos la tecnología que los conecta.
 
 4
-00:00:11,500 --> 00:00:14,100
-Automatizamos procesos repetitivos.
+00:00:11,455 --> 00:00:14,150
+Para que todo funcione como un solo sistema.
 
 5
-00:00:14,650 --> 00:00:18,650
-Y creamos agentes con inteligencia artificial para tareas concretas.
+00:00:14,450 --> 00:00:16,400
+Automatizamos lo repetitivo.
 
 6
-00:00:19,200 --> 00:00:22,800
-También aplicaciones y sistemas para organizar tu operación.
+00:00:16,700 --> 00:00:19,993
+Diseñamos sistemas y CRM que ordenan la operación y la
 
 7
-00:00:23,350 --> 00:00:26,750
-Y páginas web para presentar tu negocio y recibir consultas.
+00:00:19,843 --> 00:00:21,250
+relación con cada cliente.
 
 8
-00:00:27,300 --> 00:00:32,100
-Nuestra fe en Dios nos impulsa a trabajar con integridad y servir con compromiso.
+00:00:21,550 --> 00:00:24,100
+Creamos sitios web y tiendas en línea.
 
 9
-00:00:32,650 --> 00:00:35,250
-Derek. Tecnología con propósito.
+00:00:24,400 --> 00:00:26,338
+Integramos las herramientas que ya usás.
 
 10
-00:00:35,800 --> 00:00:38,600
-Contanos qué querés mejorar en tu empresa.
+00:00:26,629 --> 00:00:29,750
+Y lo que todavía no existe, lo desarrollamos a medida.
+
+11
+00:00:30,300 --> 00:00:32,592
+Pero no queremos solo construir para otros.
+
+12
+00:00:32,931 --> 00:00:36,141
+Buscamos problemas que todavía no tienen una buena solución.
+
+13
+00:00:36,481 --> 00:00:37,549
+Experimentamos.
+
+14
+00:00:37,888 --> 00:00:38,650
+Y construimos.
+
+15
+00:00:39,500 --> 00:00:42,696
+Con integridad, con disciplina y con respeto por cada
+
+16
+00:00:42,546 --> 00:00:44,250
+persona que confía en nosotros.
+
+17
+00:00:44,900 --> 00:00:45,950
+Derek.
+
+18
+00:00:46,250 --> 00:00:48,400
+Tecnología con propósito.

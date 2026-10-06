@@ -1,72 +1,85 @@
 {
-  "title": "Derek — presentación",
-  "note": "Reparto: Alan abre y presenta Derek; Adrián explica automatizaciones y agentes; Alan sigue con apps, sistemas y webs y dice la frase de fe; Adrián, nombre y lema; Alan cierra. Se quitó la línea de Paraguay y valores (pedido del 4/10). Duraciones 'est' estimadas a ~2,5 palabras/s hasta tener el audio real.",
-  "lead_in": 0.8,
-  "gap": 0.55,
-  "tail": 3.2,
+  "title": "Derek — Todo empieza en un punto",
+  "note": "Guion v2. Alan = lo concreto (el problema, lo que construimos, cómo trabajamos). Adrián = el porqué (la conexión, la visión, el propósito). 'both' = los dos dicen el nombre a la vez. Voces temporales de Fish Audio hasta clonar las de los fundadores.",
+  "voices": {
+    "alan": {
+      "env": "FISH_VOICE_ID_ALAN",
+      "stand_in": "8b3d90080262493f922087daa3bbe024",
+      "stand_in_title": "Joven narrador (voz temporal)"
+    },
+    "adrian": {
+      "env": "FISH_VOICE_ID_ADRIAN",
+      "stand_in": "4a8cd2da42064fe183b52317e183c762",
+      "stand_in_title": "Narrador (voz temporal)"
+    }
+  },
+  "lead_in": 1.2,
+  "gap": 0.45,
+  "tail": 3.0,
   "lines": [
     {
-      "id": "01-problema",
+      "id": "01-desconexion",
       "speaker": "alan",
-      "scene": "dispersas",
-      "est": 5.4,
-      "text": "Tu empresa tiene ideas para crecer. Pero también tareas que consumen tiempo."
+      "est": 6.6,
+      "pause_after": 0.6,
+      "text": "Toda empresa tiene clientes, procesos, información y oportunidades. Pero casi siempre viven desconectados."
     },
     {
-      "id": "02-derek",
-      "speaker": "alan",
-      "scene": "orden",
-      "est": 4.2,
-      "text": "En Derek desarrollamos software para ayudarte a trabajar mejor."
-    },
-    {
-      "id": "03-automatiza",
+      "id": "02-conexion",
       "speaker": "adrian",
-      "scene": "automatiza",
-      "est": 2.6,
-      "text": "Automatizamos procesos repetitivos."
+      "est": 5.6,
+      "text": "En Derek construimos la tecnología que los conecta. Para que todo funcione como un solo sistema."
     },
     {
-      "id": "04-agentes",
+      "id": "03-automatizamos",
+      "speaker": "alan",
+      "est": 1.8,
+      "text": "Automatizamos lo repetitivo."
+    },
+    {
+      "id": "04-sistemas",
+      "speaker": "alan",
+      "est": 4.4,
+      "text": "Diseñamos sistemas y CRM que ordenan la operación y la relación con cada cliente."
+    },
+    {
+      "id": "05-web",
+      "speaker": "alan",
+      "est": 2.4,
+      "text": "Creamos sitios web y tiendas en línea."
+    },
+    {
+      "id": "06-integraciones",
+      "speaker": "alan",
+      "est": 5.2,
+      "pause_after": 0.7,
+      "text": "Integramos las herramientas que ya usás. Y lo que todavía no existe, lo desarrollamos a medida."
+    },
+    {
+      "id": "07-vision",
       "speaker": "adrian",
-      "scene": "agentes",
-      "est": 4.0,
-      "text": "Y creamos agentes con inteligencia artificial para tareas concretas."
+      "est": 8.2,
+      "text": "Pero no queremos solo construir para otros. Buscamos problemas que todavía no tienen una buena solución. Experimentamos. Y construimos.",
+      "pause_after": 1.0
     },
     {
-      "id": "05-apps",
+      "id": "08-valores",
       "speaker": "alan",
-      "scene": "apps",
-      "est": 3.6,
-      "text": "También aplicaciones y sistemas para organizar tu operación."
+      "est": 4.6,
+      "pause_after": 0.8,
+      "text": "Con integridad, con disciplina y con respeto por cada persona que confía en nosotros."
     },
     {
-      "id": "06-web",
-      "speaker": "alan",
-      "scene": "web",
-      "est": 3.4,
-      "text": "Y páginas web para presentar tu negocio y recibir consultas."
+      "id": "09-derek",
+      "speaker": "both",
+      "est": 0.9,
+      "text": "Derek."
     },
     {
-      "id": "08-fe",
-      "speaker": "alan",
-      "scene": "fe",
-      "est": 4.8,
-      "text": "Nuestra fe en Dios nos impulsa a trabajar con integridad y servir con compromiso."
-    },
-    {
-      "id": "09-lema",
+      "id": "10-lema",
       "speaker": "adrian",
-      "scene": "lema",
-      "est": 2.6,
-      "text": "Derek. Tecnología con propósito."
-    },
-    {
-      "id": "10-cierre",
-      "speaker": "alan",
-      "scene": "cierre",
-      "est": 2.8,
-      "text": "Contanos qué querés mejorar en tu empresa."
+      "est": 2.0,
+      "text": "Tecnología con propósito."
     }
   ]
 }
